@@ -1,30 +1,45 @@
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
   <title>익명 메시지함</title>
+  <style>
+    body { font-family: sans-serif; max-width: 600px; margin: 20px auto; padding: 0 15px; }
+    textarea { width: 100%; height: 100px; margin: 10px 0; }
+    button { padding: 10px 16px; margin: 5px; }
+    ul { list-style: none; padding: 0; }
+    li { background: #f0f0f0; margin: 10px 0; padding: 12px; border-radius: 8px; }
+    #dashboard { border-top: 1px solid #ddd; padding-top: 20px; }
+  </style>
 </head>
 <body>
-  <h1>익명 메시지함</h1>
+  <h1>💬 익명 메시지함</h1>
 
   <div id="sendForm">
-    <textarea id="messageInput" placeholder="메시지를 입력하세요"></textarea>
+    <p>누군가에게 익명으로 메시지를 보내보세요!</p>
+    <textarea id="messageInput" placeholder="메시지를 입력하세요..."></textarea>
     <button onclick="sendMessage()">익명 전송</button>
-    <p id="sendStatus"></p>
-    <p><a href="login.html">로그인</a></p>
+    <p id="sendStatus" style="color: green;"></p>
+    <p><a href="login.html">로그인해서 내 메시지함 보기</a></p>
   </div>
 
   <div id="dashboard" style="display:none">
-    <p id="userLink"></p>
+    <h3>내 익명 메시지함</h3>
+    <p><strong>내 링크 공유하기:</strong><br>
+      <span id="userLink" style="word-break:break-all; font-family:monospace;"></span>
+    </p>
     <button onclick="copyLink()">링크 복사</button>
     <button onclick="logout()">로그아웃</button>
+    
+    <h4>받은 메시지</h4>
     <ul id="messagesList"></ul>
   </div>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
     import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
-    import { getDatabase, ref, push, query, orderByChild, equalTo, get } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js";
+    import { getDatabase, ref, push, query, orderByChild, equalTo, onValue } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyCi0cus6PFFospMymbmILW7jHFu3OBoABY",
@@ -45,9 +60,10 @@
 
     let currentUser = null;
 
-    onAuthStateChanged(auth, async (user) => {
+    onAuthStateChanged(auth, (user) => {
+      currentUser = user;
+
       if (user) {
-        currentUser = user;
         sendForm.style.display = "none";
         dashboard.style.display = "block";
 
@@ -63,32 +79,56 @@
 
     window.sendMessage = async () => {
       const content = messageInput.value.trim();
-      if (!content || !targetUid) return;
+      if (!content || !targetUid) {
+        sendStatus.textContent = "링크에 대상이 없거나 메시지가 비어있습니다.";
+        sendStatus.style.color = "red";
+        return;
+      }
 
-      await push(ref(db, "messages"), {
-        toUid: targetUid,
-        content,
-        createdAt: Date.now()
-      });
-
-      sendStatus.textContent = "✅ 전송 완료!";
-      messageInput.value = "";
+      try {
+        await push(ref(db, "messages"), {
+          toUid: targetUid,
+          content,
+          createdAt: Date.now()
+        });
+        sendStatus.textContent = "✅ 익명으로 전송 완료!";
+        sendStatus.style.color = "green";
+        messageInput.value = "";
+      } catch (e) {
+        sendStatus.textContent = "전송 실패: " + e.message;
+        sendStatus.style.color = "red";
+      }
     };
 
-    async function loadMessages() {
-      const q = query(ref(db, "messages"), orderByChild("toUid"), equalTo(currentUser.uid));
-      const snap = await get(q);
-      messagesList.innerHTML = "";
-      snap.forEach(child => {
-        const li = document.createElement("li");
-        li.textContent = child.val().content;
-        messagesList.appendChild(li);
+    function loadMessages() {
+      if (!currentUser) return;
+
+      const messagesRef = ref(db, "messages");
+      const q = query(messagesRef, orderByChild("toUid"), equalTo(currentUser.uid));
+
+      // 실시간 업데이트 (새 메시지 올 때 자동 추가)
+      onValue(q, (snapshot) => {
+        messagesList.innerHTML = "";
+        if (snapshot.exists()) {
+          snapshot.forEach((childSnapshot) => {
+            const msg = childSnapshot.val();
+            const li = document.createElement("li");
+            li.textContent = msg.content;
+            messagesList.appendChild(li);
+          });
+        } else {
+          messagesList.innerHTML = "<li style='color:#999'>아직 받은 메시지가 없습니다...</li>";
+        }
+      }, (error) => {
+        console.error("메시지 로드 오류:", error);
+        messagesList.innerHTML = "<li style='color:red'>메시지를 불러올 수 없습니다.</li>";
       });
     }
 
     window.copyLink = () => {
-      navigator.clipboard.writeText(userLink.textContent);
-      alert("복사됨!");
+      navigator.clipboard.writeText(userLink.textContent)
+        .then(() => alert("링크가 복사되었습니다!"))
+        .catch(() => alert("복사 실패"));
     };
 
     window.logout = async () => {
