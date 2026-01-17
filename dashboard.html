@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>대시보드</title>
+</head>
+<body>
+  <h2>내 메시지함</h2>
+  <p id="link"></p>
+  <button id="logoutBtn">로그아웃</button>
+  <ul id="list"></ul>
+
+  <script type="module">
+    import { auth } from "./firebase.js";
+    import { loadMessages, logout } from "./app.js";
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) return location.href = "login.html";
+      link.innerText = `${location.origin}/send.html?u=${user.uid}`;
+
+      const msgs = await loadMessages(user.uid);
+      list.innerHTML = msgs.map(m => `<li>${m.content}</li>`).join("");
+    });
+
+    logoutBtn.onclick = async () => {
+      await logout();
+      location.href = "login.html";
+    };
+  </script>
+</body>
+</html>
