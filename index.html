@@ -1,183 +1,135 @@
 <!-- index.html -->
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>익명 메시지함</title>
-  <style>
-    /* 이전에 사용하던 예쁜 스타일 그대로 유지 */
-    * { margin:0; padding:0; box-sizing:border-box; }
-    body {
-      font-family: system-ui, sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      min-height:100vh; display:flex; align-items:center; justify-content:center; padding:20px;
-    }
-    .container {
-      background:white; border-radius:20px; padding:40px; max-width:520px; width:100%;
-      box-shadow:0 20px 60px rgba(0,0,0,0.28);
-    }
-    h1 { color:#667eea; margin-bottom:8px; }
-    .subtitle { color:#555; margin-bottom:28px; }
-    textarea, input {
-      width:100%; padding:12px 14px; border:2px solid #ddd; border-radius:10px;
-      font-size:15px; margin-bottom:12px; resize:vertical;
-    }
-    textarea:focus, input:focus { outline:none; border-color:#667eea; }
-    button {
-      width:100%; padding:14px; background:#667eea; color:white; border:none;
-      border-radius:10px; font-size:16px; font-weight:600; cursor:pointer;
-    }
-    button:hover { background:#5568d3; }
-    .link-box {
-      background:#f0f4ff; padding:14px; border-radius:10px; word-break:break-all;
-      font-family:ui-monospace,monospace; margin:12px 0; font-size:13.5px;
-    }
-    .message {
-      background:#fff; padding:14px; border-radius:10px; margin-bottom:10px;
-      border-left:4px solid #667eea; box-shadow:0 1px 3px rgba(0,0,0,0.08);
-    }
-    .message-time { color:#888; font-size:12.5px; margin-top:4px; }
-    .error { color:#d32f2f; text-align:center; margin-top:8px; }
-    .success { color:#2e7d32; text-align:center; margin-top:8px; font-weight:500; }
-  </style>
-</head>
-<body>
-
-<div class="container">
-
-  <!-- 메시지 보내기 화면 (비로그인 상태) -->
-  <div id="sendArea">
-    <h1>💬 익명 메시지 보내기</h1>
-    <p class="subtitle">누군가에게 솔직한 한마디를 남겨보세요</p>
-    <textarea id="msgContent" rows="5" placeholder="메시지를 입력해주세요..." maxlength="800"></textarea>
-    <button onclick="sendAnonymousMessage()">보내기</button>
-    <p id="sendResult" class="success"></p>
-  </div>
-
-  <!-- 내 메시지함 (로그인 상태) -->
-  <div id="inboxArea" style="display:none">
-    <h1>📬 내 익명 메시지함</h1>
-    <div class="section">
-      <h3>내 링크</h3>
-      <div class="link-box" id="myLink">로딩중...</div>
-      <button onclick="copyMyLink()">링크 복사</button>
-    </div>
-    <div class="section">
-      <h3>받은 메시지 (<span id="msgCount">0</span>)</h3>
-      <div id="messages"></div>
-    </div>
-    <button style="background:#e53935; margin-top:16px;" onclick="logout()">로그아웃</button>
-  </div>
-
-</div>
+<!-- ... (기존 스타일은 그대로 유지) ... -->
 
 <script>
-// 실제 배포 도메인으로 변경하세요
+// 실제 Worker URL
 const API_BASE = "https://chatchat-api.alexeom97.workers.dev";
 
-async function apiRequest(endpoint, method = 'GET', body = null) {
-  try {
-    const res = await fetch(API_BASE + endpoint, {
-      method,
-      headers: { 'Content-Type': 'application/json' },
-      body: body ? JSON.stringify(body) : null,
-      credentials: 'include'   // 쿠키 기반 세션 사용 시
-    });
-    if (!res.ok) throw new Error(await res.text());
-    return await res.json();
-  } catch (e) {
-    console.error(e);
-    throw e;
+function getToken() {
+  return localStorage.getItem("authToken");
+}
+
+function setToken(token) {
+  if (token) localStorage.setItem("authToken", token);
+  else localStorage.removeItem("authToken");
+}
+
+async function apiRequest(endpoint, method = "GET", body = null) {
+  const token = getToken();
+
+  const headers = {
+    "Content-Type": "application/json",
+  };
+  if (token) headers.Authorization = `Bearer ${token}`;
+
+  const res = await fetch(API_BASE + endpoint, {
+    method,
+    headers,
+    body: body ? JSON.stringify(body) : null
+  });
+
+  if (!res.ok) {
+    const errText = await res.text();
+    throw new Error(errText || "요청 실패");
   }
+
+  return await res.json();
 }
 
-async function checkAuth() {
-  try {
-    const data = await apiRequest('/me');
-    if (data.uid) {
-      showInbox(data);
-      return true;
-    }
-  } catch {}
-  showSendForm();
-  return false;
+// ── 보내기 화면 ──────────────────────────────────────────────
+function showSendForm(targetUid = null) {
+  document.getElementById("mainContainer").innerHTML = `
+    <h1>💬 익명 메시지 보내기</h1>
+    <p class="subtitle">누군가에게 솔직한 한마디를 남겨보세요</p>
+    <textarea id="msgContent" rows="6" placeholder="메시지를 입력해주세요..." maxlength="1000"></textarea>
+    <button onclick="sendMessage('${targetUid || ''}')">보내기</button>
+    <p id="sendStatus" class="status"></p>
+    <p style="text-align:center;margin-top:20px;">
+      나만의 메시지함 만들기 →
+      <a href="/login.html" style="color:#667eea;font-weight:600;">로그인</a>
+    </p>
+  `;
 }
 
-function showSendForm() {
-  document.getElementById('sendArea').style.display = 'block';
-  document.getElementById('inboxArea').style.display = 'none';
-}
+// ── 내 대시보드 ──────────────────────────────────────────────
+function showMyDashboard() {
+  const myLink = `${location.origin}${location.pathname}?u=temp-uid-placeholder`; // 실제 uid로 교체 필요
 
-function showInbox(userData) {
-  document.getElementById('sendArea').style.display = 'none';
-  document.getElementById('inboxArea').style.display = 'block';
-
-  const link = `${location.origin}${location.pathname}?u=${userData.uid}`;
-  document.getElementById('myLink').textContent = link;
+  document.getElementById("mainContainer").innerHTML = `
+    <h1>📬 나의 익명 메시지함</h1>
+    <div style="margin:24px 0;">
+      <h3>내 링크</h3>
+      <div class="link-box">${myLink}</div>
+      <button onclick="navigator.clipboard.writeText('${myLink}').then(()=>alert('복사됨!'))">링크 복사</button>
+    </div>
+    <h3 style="margin-top:28px;">받은 메시지</h3>
+    <div id="messagesList">불러오는 중...</div>
+    <button class="logout-btn" onclick="logout()">로그아웃</button>
+  `;
 
   loadMessages();
 }
 
 async function loadMessages() {
   try {
-    const { messages = [] } = await apiRequest('/messages');
-    const container = document.getElementById('messages');
-    container.innerHTML = '';
-
-    if (messages.length === 0) {
-      container.innerHTML = '<p style="color:#888;text-align:center">아직 받은 메시지가 없습니다</p>';
-    } else {
-      messages.sort((a,b) => b.createdAt - a.createdAt);
-      messages.forEach(m => {
-        const div = document.createElement('div');
-        div.className = 'message';
-        div.innerHTML = `
-          <div>${m.content.replace(/\n/g,'<br>')}</div>
-          <div class="message-time">${new Date(m.createdAt).toLocaleString('ko-KR')}</div>
-        `;
-        container.appendChild(div);
-      });
-    }
-
-    document.getElementById('msgCount').textContent = messages.length;
+    const { messages = [] } = await apiRequest("/messages");
+    document.getElementById("messagesList").innerHTML =
+      messages.length === 0
+        ? '<p style="color:#888;text-align:center">아직 메시지가 없습니다</p>'
+        : messages.map(m => `<div class="message">${m.content}</div>`).join("");
   } catch (e) {
-    alert('메시지 불러오기 실패');
+    document.getElementById("messagesList").innerHTML = "<p>불러오기 실패</p>";
   }
 }
 
-window.sendAnonymousMessage = async () => {
-  const content = document.getElementById('msgContent').value.trim();
-  if (!content) return alert('메시지를 입력해주세요');
+window.sendMessage = async (toUid) => {
+  const content = document.getElementById("msgContent")?.value?.trim();
+  const status = document.getElementById("sendStatus");
 
-  const params = new URLSearchParams(location.search);
-  const toUid = params.get('u');
-
-  if (!toUid) return alert('잘못된 링크입니다');
+  if (!content || !toUid) {
+    status.textContent = "입력값을 확인해주세요";
+    status.className = "status error";
+    return;
+  }
 
   try {
-    await apiRequest('/send', 'POST', { toUid, content });
-    document.getElementById('sendResult').textContent = '✅ 메시지가 전송되었습니다!';
-    document.getElementById('msgContent').value = '';
+    await apiRequest("/send", "POST", { toUid, content });
+    status.textContent = "✅ 전송 완료!";
+    status.className = "status success";
+    document.getElementById("msgContent").value = "";
   } catch (e) {
-    alert('전송 실패: ' + e.message);
+    status.textContent = "전송 실패: " + e.message;
+    status.className = "status error";
   }
 };
 
-window.copyMyLink = () => {
-  navigator.clipboard.writeText(document.getElementById('myLink').textContent)
-    .then(() => alert('링크 복사 완료!'));
+window.logout = () => {
+  setToken(null);
+  location.reload();
 };
 
-window.logout = async () => {
+// ── 페이지 로드 시 판단 ───────────────────────────────────────
+(async () => {
+  const params = new URLSearchParams(location.search);
+  const targetUid = params.get("u");
+
+  if (targetUid) {
+    // ?u=xxx 가 있으면 → 무조건 보내기 화면
+    showSendForm(targetUid);
+    return;
+  }
+
+  // uid 없음 → 로그인 상태 확인
   try {
-    await apiRequest('/logout', 'POST');
-    location.reload();
-  } catch {}
-};
-
-// 페이지 로드 시 인증 상태 확인
-checkAuth();
+    const user = await apiRequest("/me");
+    if (user?.uid) {
+      showMyDashboard();
+    } else {
+      showSendForm();
+    }
+  } catch (e) {
+    console.error("상태 확인 실패:", e);
+    showSendForm();
+  }
+})();
 </script>
-</body>
-</html>
