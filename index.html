@@ -1,140 +1,162 @@
-
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>익명 메시지함</title>
   <style>
-    body { font-family: sans-serif; max-width: 600px; margin: 20px auto; padding: 0 15px; }
-    textarea { width: 100%; height: 100px; margin: 10px 0; }
-    button { padding: 10px 16px; margin: 5px; }
-    ul { list-style: none; padding: 0; }
-    li { background: #f0f0f0; margin: 10px 0; padding: 12px; border-radius: 8px; }
-    #dashboard { border-top: 1px solid #ddd; padding-top: 20px; }
+    /* 기존 스타일 그대로 유지 */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .container { background: white; border-radius: 20px; padding: 40px; max-width: 500px; width: 100%; box-shadow: 0 20px 60px rgba(0,0,0,0.3);}
+    h1 { color: #667eea; margin-bottom: 10px; }
+    .subtitle { color: #666; margin-bottom: 30px; }
+    .section { margin-bottom: 30px; padding: 20px; background: #f7f7f7; border-radius: 10px; }
+    .section h2 { font-size: 18px; margin-bottom: 15px; color: #333; }
+    input, textarea { width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 15px; margin-bottom: 10px; }
+    input:focus, textarea:focus { outline: none; border-color: #667eea; }
+    button { width: 100%; padding: 14px; background: #667eea; color: white; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; font-weight: 600; }
+    button:hover { background: #5568d3; }
+    .link-box { background: #e8f0fe; padding: 15px; border-radius: 8px; word-break: break-all; font-family: monospace; margin-bottom: 10px; font-size: 13px; }
+    .messages { margin-top: 20px; }
+    .message { background: white; padding: 15px; border-radius: 8px; margin-bottom: 10px; border-left: 4px solid #667eea; }
+    .message-content { color: #333; margin-bottom: 5px; }
+    .message-time { color: #999; font-size: 12px; }
+    .logout-btn { background: #dc3545; margin-top: 10px; }
+    .logout-btn:hover { background: #c82333; }
+    #sendStatus { color: #28a745; font-weight: 600; margin-top: 10px; }
   </style>
 </head>
 <body>
-  <h1>💬 익명 메시지함</h1>
+  <div class="container">
+    <!-- 로그인 전: 메시지 전송 폼 -->
+    <div id="sendForm">
+      <h1>💬 익명 메시지 보내기</h1>
+      <p class="subtitle">누군가에게 익명으로 메시지를 남겨보세요</p>
+      <textarea id="messageInput" rows="5" placeholder="메시지를 입력하세요..." maxlength="500"></textarea>
+      <button onclick="sendMessage()">익명으로 전송</button>
+      <p id="sendStatus"></p>
+      <p style="text-align: center; margin-top: 20px; color: #666;">
+        내 메시지함이 필요하신가요? 
+        <a href="login.html" style="color: #667eea; font-weight: 600;">로그인</a>
+      </p>
+    </div>
 
-  <div id="sendForm">
-    <p>누군가에게 익명으로 메시지를 보내보세요!</p>
-    <textarea id="messageInput" placeholder="메시지를 입력하세요..."></textarea>
-    <button onclick="sendMessage()">익명 전송</button>
-    <p id="sendStatus" style="color: green;"></p>
-    <p><a href="login.html">로그인해서 내 메시지함 보기</a></p>
-  </div>
+    <!-- 로그인 후: 대시보드 -->
+    <div id="dashboard" style="display: none;">
+      <h1>📬 내 메시지함</h1>
+      <p class="subtitle">받은 익명 메시지를 확인하세요</p>
 
-  <div id="dashboard" style="display:none">
-    <h3>내 익명 메시지함</h3>
-    <p><strong>내 링크 공유하기:</strong><br>
-      <span id="userLink" style="word-break:break-all; font-family:monospace;"></span>
-    </p>
-    <button onclick="copyLink()">링크 복사</button>
-    <button onclick="logout()">로그아웃</button>
-    
-    <h4>받은 메시지</h4>
-    <ul id="messagesList"></ul>
+      <div class="section">
+        <h2>🔗 내 전용 링크</h2>
+        <div class="link-box" id="userLink">로딩 중...</div>
+        <button onclick="copyLink()">링크 복사</button>
+      </div>
+
+      <div class="section">
+        <h2>📨 받은 메시지 (<span id="messageCount">0</span>)</h2>
+        <div class="messages" id="messagesList">
+          <p style="color: #999;">아직 받은 메시지가 없습니다</p>
+        </div>
+      </div>
+
+      <button class="logout-btn" onclick="logout()">로그아웃</button>
+    </div>
   </div>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
     import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
-    import { getDatabase, ref, push, query, orderByChild, equalTo, onValue } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js";
+    import { getDatabase, ref, push, query, orderByChild, equalTo, get } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js";
 
+    // ✅ 환경변수 사용
     const firebaseConfig = {
-      apiKey: "AIzaSyCi0cus6PFFospMymbmILW7jHFu3OBoABY",
-      authDomain: "chatchat-98586.firebaseapp.com",
-      databaseURL: "https://chatchat-98586-default-rtdb.firebaseio.com",
-      projectId: "chatchat-98586",
-      storageBucket: "chatchat-98586.firebasestorage.app",
-      messagingSenderId: "112409356117",
-      appId: "1:112409356117:web:b0c92c82a863ad989371dc"
+      apiKey: globalThis.FIREBASE_API_KEY,
+      authDomain: globalThis.FIREBASE_AUTH_DOMAIN,
+      databaseURL: globalThis.FIREBASE_DB_URL,
+      projectId: globalThis.FIREBASE_PROJECT_ID,
+      storageBucket: globalThis.FIREBASE_STORAGE_BUCKET,
+      messagingSenderId: globalThis.FIREBASE_MESSAGING_SENDER_ID,
+      appId: globalThis.FIREBASE_APP_ID,
+      measurementId: globalThis.FIREBASE_MEASUREMENT_ID
     };
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getDatabase(app);
 
-    const params = new URLSearchParams(location.search);
-    const targetUid = params.get("u");
-
     let currentUser = null;
+    let targetUserId = new URLSearchParams(window.location.search).get('u');
 
-    onAuthStateChanged(auth, (user) => {
-      currentUser = user;
-
+    onAuthStateChanged(auth, async (user) => {
       if (user) {
-        sendForm.style.display = "none";
-        dashboard.style.display = "block";
+        currentUser = user;
+        document.getElementById('sendForm').style.display = 'none';
+        document.getElementById('dashboard').style.display = 'block';
 
-        const myLink = `${location.origin}${location.pathname}?u=${user.uid}`;
-        userLink.textContent = myLink;
+        const myLink = `${window.location.origin}${window.location.pathname}?u=${user.uid}`;
+        document.getElementById('userLink').textContent = myLink;
 
-        loadMessages();
+        await loadMessages();
       } else {
-        sendForm.style.display = "block";
-        dashboard.style.display = "none";
+        document.getElementById('sendForm').style.display = 'block';
+        document.getElementById('dashboard').style.display = 'none';
       }
     });
 
     window.sendMessage = async () => {
-      const content = messageInput.value.trim();
-      if (!content || !targetUid) {
-        sendStatus.textContent = "링크에 대상이 없거나 메시지가 비어있습니다.";
-        sendStatus.style.color = "red";
+      const content = document.getElementById('messageInput').value.trim();
+      const status = document.getElementById('sendStatus');
+
+      if (!content) { status.textContent='❌ 메시지를 입력해주세요'; status.style.color='#dc3545'; return; }
+      if (!targetUserId) { status.textContent='❌ 잘못된 링크입니다'; status.style.color='#dc3545'; return; }
+
+      try {
+        await push(ref(db, 'messages'), { toUid: targetUserId, content, createdAt: Date.now() });
+        status.textContent='✅ 메시지가 전송되었습니다!';
+        status.style.color='#28a745';
+        document.getElementById('messageInput').value='';
+      } catch(e) {
+        status.textContent='❌ 전송 실패: '+e.message;
+        status.style.color='#dc3545';
+      }
+    };
+
+    async function loadMessages() {
+      if (!currentUser) return;
+      const q = query(ref(db,'messages'), orderByChild('toUid'), equalTo(currentUser.uid));
+      const snapshot = await get(q);
+      const messagesList = document.getElementById('messagesList');
+      const messageCount = document.getElementById('messageCount');
+
+      if (!snapshot.exists()) {
+        messagesList.innerHTML='<p style="color:#999;">아직 받은 메시지가 없습니다</p>';
+        messageCount.textContent='0';
         return;
       }
 
-      try {
-        await push(ref(db, "messages"), {
-          toUid: targetUid,
-          content,
-          createdAt: Date.now()
-        });
-        sendStatus.textContent = "✅ 익명으로 전송 완료!";
-        sendStatus.style.color = "green";
-        messageInput.value = "";
-      } catch (e) {
-        sendStatus.textContent = "전송 실패: " + e.message;
-        sendStatus.style.color = "red";
-      }
-    };
+      const msgs = snapshot.val();
+      messageCount.textContent=Object.keys(msgs).length;
+      messagesList.innerHTML='';
 
-    function loadMessages() {
-      if (!currentUser) return;
-
-      const messagesRef = ref(db, "messages");
-      const q = query(messagesRef, orderByChild("toUid"), equalTo(currentUser.uid));
-
-      // 실시간 업데이트 (새 메시지 올 때 자동 추가)
-      onValue(q, (snapshot) => {
-        messagesList.innerHTML = "";
-        if (snapshot.exists()) {
-          snapshot.forEach((childSnapshot) => {
-            const msg = childSnapshot.val();
-            const li = document.createElement("li");
-            li.textContent = msg.content;
-            messagesList.appendChild(li);
-          });
-        } else {
-          messagesList.innerHTML = "<li style='color:#999'>아직 받은 메시지가 없습니다...</li>";
-        }
-      }, (error) => {
-        console.error("메시지 로드 오류:", error);
-        messagesList.innerHTML = "<li style='color:red'>메시지를 불러올 수 없습니다.</li>";
+      Object.values(msgs).sort((a,b)=>b.createdAt-a.createdAt).forEach(msg=>{
+        const div = document.createElement('div');
+        div.className='message';
+        div.innerHTML=`<div class="message-content">${msg.content}</div><div class="message-time">${new Date(msg.createdAt).toLocaleString('ko-KR')}</div>`;
+        messagesList.appendChild(div);
       });
     }
 
-    window.copyLink = () => {
-      navigator.clipboard.writeText(userLink.textContent)
-        .then(() => alert("링크가 복사되었습니다!"))
-        .catch(() => alert("복사 실패"));
-    };
-
-    window.logout = async () => {
-      await signOut(auth);
-      location.href = "login.html";
-    };
+    window.copyLink = () => { navigator.clipboard.writeText(document.getElementById('userLink').textContent).then(()=>alert('링크가 복사되었습니다!')); };
+    window.logout = async () => { await signOut(auth); window.location.href='login.html'; };
   </script>
 </body>
 </html>
