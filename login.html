@@ -5,57 +5,37 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>로그인 - 익명 메시지함</title>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    * { box-sizing: border-box; }
     body {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      margin: 0;
       min-height: 100vh;
+      font-family: system-ui, -apple-system, sans-serif;
+      background: linear-gradient(135deg, #667eea, #764ba2);
       display: flex;
       align-items: center;
       justify-content: center;
       padding: 20px;
-      color: #333;
     }
-    .container {
+    .box {
       background: white;
+      padding: 36px;
       border-radius: 20px;
-      padding: 40px;
-      max-width: 420px;
       width: 100%;
+      max-width: 420px;
       box-shadow: 0 20px 60px rgba(0,0,0,0.25);
-    }
-    h1 {
-      color: #667eea;
       text-align: center;
-      margin-bottom: 12px;
     }
-    .subtitle {
-      color: #555;
-      text-align: center;
-      margin-bottom: 28px;
-    }
-    .form-group {
-      margin-bottom: 20px;
-    }
-    label {
-      display: block;
-      margin-bottom: 8px;
-      font-weight: 600;
-      font-size: 14px;
-      color: #444;
-    }
+    h1 { margin-bottom: 12px; color: #667eea; }
+    p { margin-bottom: 24px; color: #555; }
     input {
       width: 100%;
       padding: 14px;
-      border: 2px solid #ddd;
       border-radius: 10px;
+      border: 2px solid #ddd;
       font-size: 15px;
+      margin-bottom: 16px;
     }
-    input:focus {
-      outline: none;
-      border-color: #667eea;
-      box-shadow: 0 0 0 3px rgba(102,126,234,0.15);
-    }
+    input:focus { outline: none; border-color: #667eea; }
     button {
       width: 100%;
       padding: 14px;
@@ -66,128 +46,71 @@
       font-size: 16px;
       font-weight: 600;
       cursor: pointer;
-      margin-top: 12px;
     }
-    button:hover {
-      background: #5568d3;
-    }
-    button:disabled {
-      background: #aaa;
-      cursor: not-allowed;
-    }
-    .error {
-      color: #d32f2f;
-      text-align: center;
-      margin-top: 12px;
-      font-size: 14px;
-    }
-    .success {
-      color: #2e7d32;
-      text-align: center;
-      margin-top: 12px;
-      font-size: 14px;
-    }
-    .link {
-      text-align: center;
-      margin-top: 24px;
-      color: #555;
-    }
-    .link a {
-      color: #667eea;
-      font-weight: 600;
-      text-decoration: none;
-    }
-    .link a:hover {
-      text-decoration: underline;
-    }
+    button:hover { background: #5568d3; }
+    .status { margin-top: 12px; font-weight: 500; }
+    .error { color: #d32f2f; }
+    .success { color: #2e7d32; }
   </style>
 </head>
 <body>
 
-<div class="container">
-  <h1>로그인</h1>
-  <p class="subtitle">나만의 익명 메시지함을 시작하려면<br>로그인해주세요</p>
+<div class="box">
+  <h1>🔐 로그인</h1>
+  <p>닉네임을 입력하면 바로 메시지함이 생성돼요</p>
 
   <form id="loginForm">
-    <div class="form-group">
-      <label for="email">이메일</label>
-      <input type="email" id="email" placeholder="example@email.com" required autocomplete="email">
-    </div>
-
-    <div class="form-group">
-      <label for="password">비밀번호</label>
-      <input type="password" id="password" placeholder="비밀번호 입력" required autocomplete="current-password">
-    </div>
-
-    <button type="submit" id="loginBtn">로그인</button>
+    <input
+      type="text"
+      id="username"
+      placeholder="닉네임 입력"
+      maxlength="20"
+      required
+    />
+    <button type="submit">로그인</button>
   </form>
 
-  <p class="error" id="errorMsg"></p>
-  <p class="success" id="successMsg"></p>
-
-  <div class="link">
-    아직 계정이 없으신가요? 
-    <a href="#" onclick="alert('회원가입 기능은 준비중입니다')">회원가입</a>
-  </div>
+  <p id="status" class="status"></p>
 </div>
 
 <script>
-// 실제 Worker URL로 변경하세요
-const API_BASE = "https://chatchat-api.alexeom97.workers.dev";
+const API_BASE = "https://chatchat-api.alexeom97.workers.dev"; // 네 Worker 주소
 
 document.getElementById("loginForm").addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  const email = document.getElementById("email").value.trim();
-  const password = document.getElementById("password").value;
-  const errorEl = document.getElementById("errorMsg");
-  const successEl = document.getElementById("successMsg");
-  const loginBtn = document.getElementById("loginBtn");
+  const username = document.getElementById("username").value.trim();
+  const status = document.getElementById("status");
 
-  errorEl.textContent = "";
-  successEl.textContent = "";
-
-  if (!email || !password) {
-    errorEl.textContent = "이메일과 비밀번호를 모두 입력해주세요";
+  if (!username) {
+    status.textContent = "닉네임을 입력해주세요!";
+    status.className = "status error";
     return;
   }
-
-  loginBtn.disabled = true;
-  loginBtn.textContent = "로그인 중...";
 
   try {
     const res = await fetch(API_BASE + "/login", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ email, password })
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ username }),
     });
 
-    const data = await res.json();
+    if (!res.ok) throw new Error(await res.text());
 
-    if (!res.ok) {
-      throw new Error(data.error || "로그인에 실패했습니다");
-    }
+    status.textContent = "✅ 로그인 성공! 이동 중...";
+    status.className = "status success";
 
-    // 토큰 저장 (localStorage 사용)
-    localStorage.setItem("authToken", data.token);
-
-    successEl.textContent = "로그인 성공! 잠시 후 이동합니다...";
-    
-    // 1.5초 후 메인 페이지로 이동
     setTimeout(() => {
-      window.location.href = "/";  // 또는 "/index.html"
-    }, 1500);
-
+      location.href = "/";
+    }, 600);
   } catch (err) {
-    errorEl.textContent = err.message || "알 수 없는 오류가 발생했습니다";
-    console.error("로그인 에러:", err);
-  } finally {
-    loginBtn.disabled = false;
-    loginBtn.textContent = "로그인";
+    console.error(err);
+    status.textContent = "로그인 실패: 서버 오류";
+    status.className = "status error";
   }
 });
 </script>
+
 </body>
 </html>
