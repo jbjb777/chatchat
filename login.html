@@ -2,15 +2,14 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>로그인 - 익명 메시지함</title>
+  <title>로그인</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
-    * { box-sizing: border-box; }
     body {
       margin: 0;
-      min-height: 100vh;
       font-family: system-ui, -apple-system, sans-serif;
-      background: linear-gradient(135deg, #667eea, #764ba2);
+      background: linear-gradient(135deg, #6b7cff, #8f6bff);
+      min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -18,98 +17,218 @@
     }
     .box {
       background: white;
-      padding: 36px;
-      border-radius: 20px;
+      border-radius: 16px;
+      padding: 28px;
+      max-width: 400px;
       width: 100%;
-      max-width: 420px;
       box-shadow: 0 20px 60px rgba(0,0,0,0.25);
-      text-align: center;
     }
-    h1 { margin-bottom: 12px; color: #667eea; }
-    p { margin-bottom: 24px; color: #555; }
+    h2 {
+      text-align: center;
+      color: #6b7cff;
+      margin-bottom: 6px;
+    }
+    .subtitle {
+      text-align: center;
+      color: #555;
+      margin-bottom: 20px;
+      font-size: 14px;
+    }
+    .group {
+      margin-bottom: 14px;
+    }
+    label {
+      display: block;
+      font-weight: 600;
+      font-size: 13px;
+      margin-bottom: 6px;
+      color: #444;
+    }
     input {
       width: 100%;
-      padding: 14px;
+      padding: 12px;
       border-radius: 10px;
       border: 2px solid #ddd;
-      font-size: 15px;
-      margin-bottom: 16px;
+      font-size: 14px;
     }
-    input:focus { outline: none; border-color: #667eea; }
+    input:focus {
+      outline: none;
+      border-color: #6b7cff;
+      box-shadow: 0 0 0 3px rgba(107,124,255,0.15);
+    }
     button {
       width: 100%;
-      padding: 14px;
-      background: #667eea;
-      color: white;
-      border: none;
+      padding: 12px;
       border-radius: 10px;
-      font-size: 16px;
+      border: none;
+      background: #6b7cff;
+      color: white;
+      font-size: 15px;
       font-weight: 600;
       cursor: pointer;
+      margin-top: 8px;
     }
-    button:hover { background: #5568d3; }
-    .status { margin-top: 12px; font-weight: 500; }
-    .error { color: #d32f2f; }
-    .success { color: #2e7d32; }
+    button.secondary {
+      background: #eee;
+      color: #333;
+    }
+    button:disabled {
+      background: #aaa;
+      cursor: not-allowed;
+    }
+    .error {
+      color: #c62828;
+      font-size: 13px;
+      text-align: center;
+      margin-top: 10px;
+    }
+    .success {
+      color: #2e7d32;
+      font-size: 13px;
+      text-align: center;
+      margin-top: 10px;
+    }
   </style>
 </head>
 <body>
 
 <div class="box">
-  <h1>🔐 로그인</h1>
-  <p>닉네임을 입력하면 바로 메시지함이 생성돼요</p>
+  <h2>로그인 / 회원가입</h2>
+  <p class="subtitle">익명 메시지함을 시작하세요</p>
 
-  <form id="loginForm">
-    <input
-      type="text"
-      id="username"
-      placeholder="닉네임 입력"
-      maxlength="20"
-      required
-    />
-    <button type="submit">로그인</button>
-  </form>
+  <div class="group">
+    <label>이메일</label>
+    <input id="email" type="email" placeholder="example@email.com" autocomplete="email" />
+  </div>
 
-  <p id="status" class="status"></p>
+  <div class="group">
+    <label>비밀번호</label>
+    <input id="password" type="password" placeholder="비밀번호" autocomplete="current-password" />
+  </div>
+
+  <div class="group">
+    <label>닉네임 (회원가입 시)</label>
+    <input id="username" type="text" placeholder="닉네임" />
+  </div>
+
+  <button id="signupBtn">회원가입</button>
+  <button id="loginBtn" class="secondary">로그인</button>
+
+  <p id="errorMsg" class="error"></p>
+  <p id="successMsg" class="success"></p>
 </div>
 
 <script>
-const API_BASE = "https://chatchat-api.alexeom97.workers.dev"; // 네 Worker 주소
+const API_BASE = "https://chatchat-api.alexeom97.workers.dev";
 
-document.getElementById("loginForm").addEventListener("submit", async (e) => {
-  e.preventDefault();
+const emailEl = document.getElementById("email");
+const passwordEl = document.getElementById("password");
+const usernameEl = document.getElementById("username");
+const errorEl = document.getElementById("errorMsg");
+const successEl = document.getElementById("successMsg");
+const signupBtn = document.getElementById("signupBtn");
+const loginBtn = document.getElementById("loginBtn");
 
-  const username = document.getElementById("username").value.trim();
-  const status = document.getElementById("status");
+function setLoading(btn, loading) {
+  btn.disabled = loading;
+  btn.textContent = loading
+    ? "처리 중..."
+    : btn === signupBtn ? "회원가입" : "로그인";
+}
 
-  if (!username) {
-    status.textContent = "닉네임을 입력해주세요!";
-    status.className = "status error";
+async function login(email, password) {
+  const res = await fetch(API_BASE + "/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password })
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || "로그인 실패");
+  return data;
+}
+
+signupBtn.onclick = async () => {
+  errorEl.textContent = "";
+  successEl.textContent = "";
+
+  const email = emailEl.value.trim();
+  const password = passwordEl.value;
+  const username = usernameEl.value.trim();
+
+  if (!email || !password || !username) {
+    errorEl.textContent = "이메일, 비밀번호, 닉네임을 모두 입력해주세요";
     return;
   }
 
+  setLoading(signupBtn, true);
+
   try {
-    const res = await fetch(API_BASE + "/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-      body: JSON.stringify({ username }),
-    });
+    // Firebase Auth REST: signUp
+    const res = await fetch(
+      `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyCi0cus6PFFospMymbmILW7jHFu3OBoABY`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email,
+          password,
+          returnSecureToken: true
+        })
+      }
+    );
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error?.message || "회원가입 실패");
 
-    if (!res.ok) throw new Error(await res.text());
+    // 사용자 프로필 저장 (Realtime DB)
+    await fetch(
+      "https://chatchat-98586-default-rtdb.firebaseio.com/users/" +
+        data.localId +
+        ".json",
+      {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username,
+          createdAt: Date.now()
+        })
+      }
+    );
 
-    status.textContent = "✅ 로그인 성공! 이동 중...";
-    status.className = "status success";
-
-    setTimeout(() => {
-      location.href = "/";
-    }, 600);
-  } catch (err) {
-    console.error(err);
-    status.textContent = "로그인 실패: 서버 오류";
-    status.className = "status error";
+    localStorage.setItem("authToken", data.idToken);
+    successEl.textContent = "회원가입 성공! 이동 중...";
+    setTimeout(() => (location.href = "index.html"), 1000);
+  } catch (e) {
+    errorEl.textContent = e.message;
+  } finally {
+    setLoading(signupBtn, false);
   }
-});
+};
+
+loginBtn.onclick = async () => {
+  errorEl.textContent = "";
+  successEl.textContent = "";
+
+  const email = emailEl.value.trim();
+  const password = passwordEl.value;
+
+  if (!email || !password) {
+    errorEl.textContent = "이메일과 비밀번호를 입력해주세요";
+    return;
+  }
+
+  setLoading(loginBtn, true);
+
+  try {
+    const data = await login(email, password);
+    localStorage.setItem("authToken", data.token);
+    successEl.textContent = "로그인 성공! 이동 중...";
+    setTimeout(() => (location.href = "index.html"), 800);
+  } catch (e) {
+    errorEl.textContent = e.message;
+  } finally {
+    setLoading(loginBtn, false);
+  }
+};
 </script>
 
 </body>

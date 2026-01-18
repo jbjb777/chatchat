@@ -2,81 +2,88 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>익명 메시지함</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
-    * { margin:0; padding:0; box-sizing:border-box; }
     body {
+      margin: 0;
       font-family: system-ui, -apple-system, sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      min-height:100vh;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding:20px;
-      color:#333;
+      background: #f6f7fb;
+      padding: 20px;
     }
-    .container {
-      background:white;
-      border-radius:20px;
-      padding:40px;
-      max-width:520px;
-      width:100%;
-      box-shadow:0 20px 60px rgba(0,0,0,0.25);
+    h1 { text-align: center; margin-bottom: 16px; }
+    .box {
+      max-width: 480px;
+      margin: auto;
+      background: white;
+      border-radius: 14px;
+      padding: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
     }
-    h1 { color:#667eea; margin-bottom:12px; text-align:center; }
-    .subtitle { color:#555; margin-bottom:28px; text-align:center; }
-    textarea, input {
-      width:100%;
-      padding:14px;
-      border:2px solid #ddd;
-      border-radius:10px;
-      font-size:15px;
-      margin-bottom:16px;
-      resize:vertical;
+    textarea {
+      width: 100%;
+      min-height: 100px;
+      padding: 12px;
+      border-radius: 10px;
+      border: 2px solid #ddd;
+      font-size: 15px;
+      resize: vertical;
     }
-    textarea:focus, input:focus { outline:none; border-color:#667eea; }
+    textarea:focus {
+      outline: none;
+      border-color: #6b7cff;
+    }
     button {
-      width:100%;
-      padding:14px;
-      background:#667eea;
-      color:white;
-      border:none;
-      border-radius:10px;
-      font-size:16px;
-      font-weight:600;
-      cursor:pointer;
+      width: 100%;
+      padding: 12px;
+      border-radius: 10px;
+      border: none;
+      background: #6b7cff;
+      color: white;
+      font-size: 15px;
+      font-weight: 600;
+      margin-top: 10px;
+      cursor: pointer;
     }
-    button:hover { background:#5568d3; }
+    button:hover { background: #5a6bf0; }
+    .secondary {
+      background: #eee;
+      color: #333;
+    }
+    .status {
+      margin-top: 8px;
+      font-size: 14px;
+      text-align: center;
+    }
+    .success { color: #2e7d32; }
+    .error { color: #c62828; }
     .link-box {
-      background:#f0f4ff;
-      padding:14px;
-      border-radius:10px;
-      word-break:break-all;
-      font-family:monospace;
-      margin:12px 0;
-      font-size:14px;
+      background: #f1f3f8;
+      padding: 10px;
+      border-radius: 8px;
+      word-break: break-all;
+      font-size: 14px;
+      margin-top: 6px;
     }
-    .message {
-      background:#fff;
-      padding:16px;
-      border-radius:10px;
-      margin-bottom:12px;
-      border-left:4px solid #667eea;
-      box-shadow:0 2px 6px rgba(0,0,0,0.08);
+    ul {
+      list-style: none;
+      padding: 0;
+      margin-top: 12px;
     }
-    .message-time { color:#777; font-size:13px; margin-top:6px; }
-    .status { text-align:center; margin:12px 0; font-weight:500; }
-    .success { color:#2e7d32; }
-    .error { color:#d32f2f; }
-    .logout-btn { background:#e53935; margin-top:20px; }
-    .logout-btn:hover { background:#c62828; }
+    li {
+      background: #f7f8fc;
+      border-radius: 10px;
+      padding: 10px;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
   </style>
 </head>
 <body>
 
-<!-- 🔥 이 div가 없어서 흰 화면이었던 거임 -->
-<div class="container" id="mainContainer"></div>
+<h1>💬 익명 메시지함</h1>
+
+<div class="box" id="mainContainer"></div>
 
 <script>
 const API_BASE = "https://chatchat-api.alexeom97.workers.dev";
@@ -84,14 +91,14 @@ const API_BASE = "https://chatchat-api.alexeom97.workers.dev";
 function getToken() {
   return localStorage.getItem("authToken");
 }
-function setToken(token) {
-  if (token) localStorage.setItem("authToken", token);
+function setToken(t) {
+  if (t) localStorage.setItem("authToken", t);
   else localStorage.removeItem("authToken");
 }
 
-async function apiRequest(endpoint, method = "GET", body = null) {
-  const token = getToken();
+async function api(endpoint, method = "GET", body = null) {
   const headers = { "Content-Type": "application/json" };
+  const token = getToken();
   if (token) headers.Authorization = `Bearer ${token}`;
 
   const res = await fetch(API_BASE + endpoint, {
@@ -100,76 +107,70 @@ async function apiRequest(endpoint, method = "GET", body = null) {
     body: body ? JSON.stringify(body) : null
   });
 
-  if (!res.ok) {
-    const text = await res.text();
-    throw new Error(text || "요청 실패");
-  }
-  return await res.json();
+  const text = await res.text();
+  let data;
+  try { data = JSON.parse(text); } catch { data = { error: text }; }
+
+  if (!res.ok) throw new Error(data.error || "요청 실패");
+  return data;
 }
 
-// ───────── 보내기 화면 ─────────
-function showSendForm(targetUid = null) {
-  const container = document.getElementById("mainContainer");
-  container.innerHTML = `
-    <h1>💬 익명 메시지 보내기</h1>
-    <p class="subtitle">누군가에게 솔직한 한마디를 남겨보세요</p>
-    <textarea id="msgContent" rows="6" placeholder="메시지를 입력해주세요..." maxlength="1000"></textarea>
-    <button onclick="sendMessage('${targetUid || ''}')">보내기</button>
+/* ───────── UI ───────── */
+
+function showSendForm(targetUid = "") {
+  const el = document.getElementById("mainContainer");
+  if (!el) return;
+
+  el.innerHTML = `
+    <h3 style="text-align:center">익명 메시지 보내기</h3>
+    <textarea id="msgContent" placeholder="메시지를 입력하세요" maxlength="1000"></textarea>
+    <button id="sendBtn">보내기</button>
     <p id="sendStatus" class="status"></p>
-    <p style="text-align:center;margin-top:20px;">
-      나만의 메시지함 만들기 →
-      <a href="/login.html" style="color:#667eea;font-weight:600;">로그인</a>
+    <p style="text-align:center;margin-top:14px">
+      나도 만들기 →
+      <a href="login.html" style="color:#6b7cff;font-weight:600">로그인</a>
     </p>
   `;
+
+  document.getElementById("sendBtn").onclick = sendMessage.bind(null, targetUid);
 }
 
-// ───────── 내 대시보드 ─────────
-function showMyDashboard(user) {
-  const container = document.getElementById("mainContainer");
-  const myLink = `${location.origin}${location.pathname}?u=${user.uid}`;
+function showDashboard(uid) {
+  const el = document.getElementById("mainContainer");
+  if (!el) return;
 
-  container.innerHTML = `
-    <h1>📬 나의 익명 메시지함</h1>
-    <div style="margin:24px 0;">
-      <h3>내 링크</h3>
+  const myLink = `${location.origin}${location.pathname}?u=${uid}`;
+
+  el.innerHTML = `
+    <h3 style="text-align:center">📬 나의 메시지함</h3>
+
+    <div style="margin:14px 0">
+      <div style="font-weight:600">내 링크</div>
       <div class="link-box" id="myLink">${myLink}</div>
-      <button onclick="copyLink()">링크 복사</button>
+      <button class="secondary" id="copyBtn">링크 복사</button>
     </div>
-    <h3 style="margin-top:28px;">받은 메시지 (<span id="msgCount">0</span>)</h3>
-    <div id="messagesList">불러오는 중...</div>
-    <button class="logout-btn" onclick="logout()">로그아웃</button>
+
+    <h4 style="margin-top:18px">받은 메시지</h4>
+    <ul id="messagesList"><li style="text-align:center;color:#888">불러오는 중...</li></ul>
+
+    <button class="secondary" id="logoutBtn">로그아웃</button>
   `;
 
-  loadMessages();
+  document.getElementById("copyBtn").onclick = () => {
+    navigator.clipboard.writeText(myLink);
+    alert("복사됨!");
+  };
+  document.getElementById("logoutBtn").onclick = logout;
+
+  loadMessages(uid);
 }
 
-async function loadMessages() {
-  try {
-    const { messages = [] } = await apiRequest("/messages");
-    const list = document.getElementById("messagesList");
-    const count = document.getElementById("msgCount");
+/* ───────── Logic ───────── */
 
-    count.textContent = messages.length;
-
-    if (messages.length === 0) {
-      list.innerHTML = '<p style="color:#888;text-align:center;padding:30px 0;">아직 메시지가 없어요</p>';
-      return;
-    }
-
-    list.innerHTML = messages.map(m => `
-      <div class="message">
-        <div>${m.content.replace(/\n/g, "<br>")}</div>
-        <div class="message-time">${new Date(m.createdAt || Date.now()).toLocaleString("ko-KR")}</div>
-      </div>
-    `).join("");
-  } catch (e) {
-    document.getElementById("messagesList").innerHTML = "<p>불러오기 실패</p>";
-  }
-}
-
-window.sendMessage = async (toUid) => {
-  const content = document.getElementById("msgContent")?.value?.trim();
+async function sendMessage(toUid) {
+  const input = document.getElementById("msgContent");
   const status = document.getElementById("sendStatus");
+  const content = input?.value?.trim();
 
   if (!content || !toUid) {
     status.textContent = "메시지를 입력해주세요";
@@ -178,28 +179,48 @@ window.sendMessage = async (toUid) => {
   }
 
   try {
-    await apiRequest("/send", "POST", { toUid, content });
+    await api("/send", "POST", { toUid, content });
     status.textContent = "✅ 전송 완료!";
     status.className = "status success";
-    document.getElementById("msgContent").value = "";
+    input.value = "";
   } catch (e) {
     status.textContent = "전송 실패: " + e.message;
     status.className = "status error";
   }
-};
+}
 
-window.copyLink = () => {
-  const link = document.getElementById("myLink")?.textContent;
-  if (!link) return;
-  navigator.clipboard.writeText(link).then(() => alert("복사됨!"));
-};
+async function loadMessages(uid) {
+  try {
+    const { messages = [] } = await api(`/messages?uid=${uid}`);
+    const list = document.getElementById("messagesList");
+    if (!list) return;
 
-window.logout = () => {
+    if (messages.length === 0) {
+      list.innerHTML = `<li style="text-align:center;color:#888">아직 메시지가 없습니다</li>`;
+    } else {
+      list.innerHTML = messages
+        .map(m => `<li>${escapeHtml(m.content)}</li>`)
+        .join("");
+    }
+  } catch (e) {
+    document.getElementById("messagesList").innerHTML =
+      `<li style="text-align:center;color:#c62828">불러오기 실패</li>`;
+  }
+}
+
+function logout() {
   setToken(null);
-  location.reload();
-};
+  location.href = "login.html";
+}
 
-// ───────── 페이지 로드 분기 ─────────
+function escapeHtml(str) {
+  return str.replace(/[&<>"']/g, m =>
+    ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" }[m])
+  );
+}
+
+/* ───────── Page Load ───────── */
+
 (async () => {
   const params = new URLSearchParams(location.search);
   const targetUid = params.get("u");
@@ -210,14 +231,17 @@ window.logout = () => {
   }
 
   try {
-    const user = await apiRequest("/me");
-    if (user?.uid) showMyDashboard(user);
-    else showSendForm();
-  } catch (e) {
-    console.error("상태 확인 실패:", e);
+    const user = await api("/me");
+    if (user?.uid) {
+      showDashboard(user.uid);
+    } else {
+      showSendForm();
+    }
+  } catch {
     showSendForm();
   }
 })();
 </script>
+
 </body>
 </html>
