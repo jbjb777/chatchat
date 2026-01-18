@@ -1,162 +1,183 @@
+<!-- index.html -->
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>익명 메시지함</title>
   <style>
-    /* 기존 스타일 그대로 유지 */
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    /* 이전에 사용하던 예쁜 스타일 그대로 유지 */
+    * { margin:0; padding:0; box-sizing:border-box; }
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-family: system-ui, sans-serif;
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
+      min-height:100vh; display:flex; align-items:center; justify-content:center; padding:20px;
     }
-    .container { background: white; border-radius: 20px; padding: 40px; max-width: 500px; width: 100%; box-shadow: 0 20px 60px rgba(0,0,0,0.3);}
-    h1 { color: #667eea; margin-bottom: 10px; }
-    .subtitle { color: #666; margin-bottom: 30px; }
-    .section { margin-bottom: 30px; padding: 20px; background: #f7f7f7; border-radius: 10px; }
-    .section h2 { font-size: 18px; margin-bottom: 15px; color: #333; }
-    input, textarea { width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 15px; margin-bottom: 10px; }
-    input:focus, textarea:focus { outline: none; border-color: #667eea; }
-    button { width: 100%; padding: 14px; background: #667eea; color: white; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; font-weight: 600; }
-    button:hover { background: #5568d3; }
-    .link-box { background: #e8f0fe; padding: 15px; border-radius: 8px; word-break: break-all; font-family: monospace; margin-bottom: 10px; font-size: 13px; }
-    .messages { margin-top: 20px; }
-    .message { background: white; padding: 15px; border-radius: 8px; margin-bottom: 10px; border-left: 4px solid #667eea; }
-    .message-content { color: #333; margin-bottom: 5px; }
-    .message-time { color: #999; font-size: 12px; }
-    .logout-btn { background: #dc3545; margin-top: 10px; }
-    .logout-btn:hover { background: #c82333; }
-    #sendStatus { color: #28a745; font-weight: 600; margin-top: 10px; }
+    .container {
+      background:white; border-radius:20px; padding:40px; max-width:520px; width:100%;
+      box-shadow:0 20px 60px rgba(0,0,0,0.28);
+    }
+    h1 { color:#667eea; margin-bottom:8px; }
+    .subtitle { color:#555; margin-bottom:28px; }
+    textarea, input {
+      width:100%; padding:12px 14px; border:2px solid #ddd; border-radius:10px;
+      font-size:15px; margin-bottom:12px; resize:vertical;
+    }
+    textarea:focus, input:focus { outline:none; border-color:#667eea; }
+    button {
+      width:100%; padding:14px; background:#667eea; color:white; border:none;
+      border-radius:10px; font-size:16px; font-weight:600; cursor:pointer;
+    }
+    button:hover { background:#5568d3; }
+    .link-box {
+      background:#f0f4ff; padding:14px; border-radius:10px; word-break:break-all;
+      font-family:ui-monospace,monospace; margin:12px 0; font-size:13.5px;
+    }
+    .message {
+      background:#fff; padding:14px; border-radius:10px; margin-bottom:10px;
+      border-left:4px solid #667eea; box-shadow:0 1px 3px rgba(0,0,0,0.08);
+    }
+    .message-time { color:#888; font-size:12.5px; margin-top:4px; }
+    .error { color:#d32f2f; text-align:center; margin-top:8px; }
+    .success { color:#2e7d32; text-align:center; margin-top:8px; font-weight:500; }
   </style>
 </head>
 <body>
-  <div class="container">
-    <!-- 로그인 전: 메시지 전송 폼 -->
-    <div id="sendForm">
-      <h1>💬 익명 메시지 보내기</h1>
-      <p class="subtitle">누군가에게 익명으로 메시지를 남겨보세요</p>
-      <textarea id="messageInput" rows="5" placeholder="메시지를 입력하세요..." maxlength="500"></textarea>
-      <button onclick="sendMessage()">익명으로 전송</button>
-      <p id="sendStatus"></p>
-      <p style="text-align: center; margin-top: 20px; color: #666;">
-        내 메시지함이 필요하신가요? 
-        <a href="login.html" style="color: #667eea; font-weight: 600;">로그인</a>
-      </p>
-    </div>
 
-    <!-- 로그인 후: 대시보드 -->
-    <div id="dashboard" style="display: none;">
-      <h1>📬 내 메시지함</h1>
-      <p class="subtitle">받은 익명 메시지를 확인하세요</p>
+<div class="container">
 
-      <div class="section">
-        <h2>🔗 내 전용 링크</h2>
-        <div class="link-box" id="userLink">로딩 중...</div>
-        <button onclick="copyLink()">링크 복사</button>
-      </div>
-
-      <div class="section">
-        <h2>📨 받은 메시지 (<span id="messageCount">0</span>)</h2>
-        <div class="messages" id="messagesList">
-          <p style="color: #999;">아직 받은 메시지가 없습니다</p>
-        </div>
-      </div>
-
-      <button class="logout-btn" onclick="logout()">로그아웃</button>
-    </div>
+  <!-- 메시지 보내기 화면 (비로그인 상태) -->
+  <div id="sendArea">
+    <h1>💬 익명 메시지 보내기</h1>
+    <p class="subtitle">누군가에게 솔직한 한마디를 남겨보세요</p>
+    <textarea id="msgContent" rows="5" placeholder="메시지를 입력해주세요..." maxlength="800"></textarea>
+    <button onclick="sendAnonymousMessage()">보내기</button>
+    <p id="sendResult" class="success"></p>
   </div>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
-    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
-    import { getDatabase, ref, push, query, orderByChild, equalTo, get } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js";
+  <!-- 내 메시지함 (로그인 상태) -->
+  <div id="inboxArea" style="display:none">
+    <h1>📬 내 익명 메시지함</h1>
+    <div class="section">
+      <h3>내 링크</h3>
+      <div class="link-box" id="myLink">로딩중...</div>
+      <button onclick="copyMyLink()">링크 복사</button>
+    </div>
+    <div class="section">
+      <h3>받은 메시지 (<span id="msgCount">0</span>)</h3>
+      <div id="messages"></div>
+    </div>
+    <button style="background:#e53935; margin-top:16px;" onclick="logout()">로그아웃</button>
+  </div>
 
-    // ✅ 환경변수 사용
-    const firebaseConfig = {
-      apiKey: globalThis.FIREBASE_API_KEY,
-      authDomain: globalThis.FIREBASE_AUTH_DOMAIN,
-      databaseURL: globalThis.FIREBASE_DB_URL,
-      projectId: globalThis.FIREBASE_PROJECT_ID,
-      storageBucket: globalThis.FIREBASE_STORAGE_BUCKET,
-      messagingSenderId: globalThis.FIREBASE_MESSAGING_SENDER_ID,
-      appId: globalThis.FIREBASE_APP_ID,
-      measurementId: globalThis.FIREBASE_MEASUREMENT_ID
-    };
+</div>
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getDatabase(app);
+<script>
+// 실제 배포 도메인으로 변경하세요
+const API_BASE = "https://chatchat-api.alexeom97.workers.dev";
 
-    let currentUser = null;
-    let targetUserId = new URLSearchParams(window.location.search).get('u');
-
-    onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        currentUser = user;
-        document.getElementById('sendForm').style.display = 'none';
-        document.getElementById('dashboard').style.display = 'block';
-
-        const myLink = `${window.location.origin}${window.location.pathname}?u=${user.uid}`;
-        document.getElementById('userLink').textContent = myLink;
-
-        await loadMessages();
-      } else {
-        document.getElementById('sendForm').style.display = 'block';
-        document.getElementById('dashboard').style.display = 'none';
-      }
+async function apiRequest(endpoint, method = 'GET', body = null) {
+  try {
+    const res = await fetch(API_BASE + endpoint, {
+      method,
+      headers: { 'Content-Type': 'application/json' },
+      body: body ? JSON.stringify(body) : null,
+      credentials: 'include'   // 쿠키 기반 세션 사용 시
     });
+    if (!res.ok) throw new Error(await res.text());
+    return await res.json();
+  } catch (e) {
+    console.error(e);
+    throw e;
+  }
+}
 
-    window.sendMessage = async () => {
-      const content = document.getElementById('messageInput').value.trim();
-      const status = document.getElementById('sendStatus');
+async function checkAuth() {
+  try {
+    const data = await apiRequest('/me');
+    if (data.uid) {
+      showInbox(data);
+      return true;
+    }
+  } catch {}
+  showSendForm();
+  return false;
+}
 
-      if (!content) { status.textContent='❌ 메시지를 입력해주세요'; status.style.color='#dc3545'; return; }
-      if (!targetUserId) { status.textContent='❌ 잘못된 링크입니다'; status.style.color='#dc3545'; return; }
+function showSendForm() {
+  document.getElementById('sendArea').style.display = 'block';
+  document.getElementById('inboxArea').style.display = 'none';
+}
 
-      try {
-        await push(ref(db, 'messages'), { toUid: targetUserId, content, createdAt: Date.now() });
-        status.textContent='✅ 메시지가 전송되었습니다!';
-        status.style.color='#28a745';
-        document.getElementById('messageInput').value='';
-      } catch(e) {
-        status.textContent='❌ 전송 실패: '+e.message;
-        status.style.color='#dc3545';
-      }
-    };
+function showInbox(userData) {
+  document.getElementById('sendArea').style.display = 'none';
+  document.getElementById('inboxArea').style.display = 'block';
 
-    async function loadMessages() {
-      if (!currentUser) return;
-      const q = query(ref(db,'messages'), orderByChild('toUid'), equalTo(currentUser.uid));
-      const snapshot = await get(q);
-      const messagesList = document.getElementById('messagesList');
-      const messageCount = document.getElementById('messageCount');
+  const link = `${location.origin}${location.pathname}?u=${userData.uid}`;
+  document.getElementById('myLink').textContent = link;
 
-      if (!snapshot.exists()) {
-        messagesList.innerHTML='<p style="color:#999;">아직 받은 메시지가 없습니다</p>';
-        messageCount.textContent='0';
-        return;
-      }
+  loadMessages();
+}
 
-      const msgs = snapshot.val();
-      messageCount.textContent=Object.keys(msgs).length;
-      messagesList.innerHTML='';
+async function loadMessages() {
+  try {
+    const { messages = [] } = await apiRequest('/messages');
+    const container = document.getElementById('messages');
+    container.innerHTML = '';
 
-      Object.values(msgs).sort((a,b)=>b.createdAt-a.createdAt).forEach(msg=>{
+    if (messages.length === 0) {
+      container.innerHTML = '<p style="color:#888;text-align:center">아직 받은 메시지가 없습니다</p>';
+    } else {
+      messages.sort((a,b) => b.createdAt - a.createdAt);
+      messages.forEach(m => {
         const div = document.createElement('div');
-        div.className='message';
-        div.innerHTML=`<div class="message-content">${msg.content}</div><div class="message-time">${new Date(msg.createdAt).toLocaleString('ko-KR')}</div>`;
-        messagesList.appendChild(div);
+        div.className = 'message';
+        div.innerHTML = `
+          <div>${m.content.replace(/\n/g,'<br>')}</div>
+          <div class="message-time">${new Date(m.createdAt).toLocaleString('ko-KR')}</div>
+        `;
+        container.appendChild(div);
       });
     }
 
-    window.copyLink = () => { navigator.clipboard.writeText(document.getElementById('userLink').textContent).then(()=>alert('링크가 복사되었습니다!')); };
-    window.logout = async () => { await signOut(auth); window.location.href='login.html'; };
-  </script>
+    document.getElementById('msgCount').textContent = messages.length;
+  } catch (e) {
+    alert('메시지 불러오기 실패');
+  }
+}
+
+window.sendAnonymousMessage = async () => {
+  const content = document.getElementById('msgContent').value.trim();
+  if (!content) return alert('메시지를 입력해주세요');
+
+  const params = new URLSearchParams(location.search);
+  const toUid = params.get('u');
+
+  if (!toUid) return alert('잘못된 링크입니다');
+
+  try {
+    await apiRequest('/send', 'POST', { toUid, content });
+    document.getElementById('sendResult').textContent = '✅ 메시지가 전송되었습니다!';
+    document.getElementById('msgContent').value = '';
+  } catch (e) {
+    alert('전송 실패: ' + e.message);
+  }
+};
+
+window.copyMyLink = () => {
+  navigator.clipboard.writeText(document.getElementById('myLink').textContent)
+    .then(() => alert('링크 복사 완료!'));
+};
+
+window.logout = async () => {
+  try {
+    await apiRequest('/logout', 'POST');
+    location.reload();
+  } catch {}
+};
+
+// 페이지 로드 시 인증 상태 확인
+checkAuth();
+</script>
 </body>
 </html>

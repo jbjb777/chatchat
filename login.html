@@ -1,108 +1,54 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>로그인 - 익명 메시지함</title>
   <style>
-    /* 기존 스타일 유지 */
-    *{margin:0;padding:0;box-sizing:border-box}
-    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
-    .container{background:white;border-radius:20px;padding:40px;max-width:400px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,0.3)}
-    h1{text-align:center;color:#667eea;margin-bottom:10px}
-    .subtitle{text-align:center;color:#666;margin-bottom:30px}
-    .tabs{display:flex;gap:10px;margin-bottom:30px}
-    .tab{flex:1;padding:12px;text-align:center;border:2px solid #ddd;border-radius:8px;cursor:pointer;font-weight:600;transition:all .3s}
-    .tab.active{background:#667eea;color:white;border-color:#667eea}
-    .form-group{margin-bottom:15px}
-    label{display:block;margin-bottom:5px;color:#333;font-weight:600;font-size:14px}
-    input{width:100%;padding:12px;border:2px solid #ddd;border-radius:8px;font-size:15px}
-    input:focus{outline:none;border-color:#667eea}
-    button{width:100%;padding:14px;background:#667eea;color:white;border:none;border-radius:8px;font-size:16px;cursor:pointer;font-weight:600;margin-top:10px}
-    button:hover{background:#5568d3}
-    button:disabled{background:#ccc;cursor:not-allowed}
-    .error{color:#dc3545;font-size:14px;margin-top:10px;text-align:center}
-    .success{color:#28a745;font-size:14px;margin-top:10px;text-align:center}
-    #signupForm{display:none}
+    /* 위 index.html과 동일한 스타일 복사해서 사용 */
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>💬 익명 메시지함</h1>
-    <p class="subtitle">나만의 익명 메시지함을 만들어보세요</p>
 
-    <div class="tabs">
-      <div class="tab active" onclick="showLogin()">로그인</div>
-      <div class="tab" onclick="showSignup()">회원가입</div>
-    </div>
+<div class="container" style="max-width:420px">
+  <h1 style="text-align:center">로그인</h1>
 
-    <form id="loginForm" onsubmit="handleLogin(event)">
-      <div class="form-group"><label>이메일</label><input type="email" id="loginEmail" required placeholder="example@email.com"></div>
-      <div class="form-group"><label>비밀번호</label><input type="password" id="loginPassword" required placeholder="비밀번호 (최소 6자)"></div>
-      <button type="submit">로그인</button>
-      <p id="loginError" class="error"></p>
-    </form>
+  <form id="loginForm">
+    <input type="email" id="email" placeholder="이메일" required autocomplete="email">
+    <input type="password" id="password" placeholder="비밀번호" required autocomplete="current-password">
+    <button type="submit">로그인</button>
+  </form>
 
-    <form id="signupForm" onsubmit="handleSignup(event)">
-      <div class="form-group"><label>닉네임</label><input type="text" id="signupUsername" required placeholder="사용할 닉네임"></div>
-      <div class="form-group"><label>이메일</label><input type="email" id="signupEmail" required placeholder="example@email.com"></div>
-      <div class="form-group"><label>비밀번호</label><input type="password" id="signupPassword" required placeholder="비밀번호 (최소 6자)" minlength="6"></div>
-      <button type="submit">회원가입</button>
-      <p id="signupError" class="error"></p>
-      <p id="signupSuccess" class="success"></p>
-    </form>
-  </div>
+  <p style="margin-top:20px;text-align:center">
+    아직 계정이 없으신가요? <a href="#" onclick="alert('회원가입은 준비중입니다')">회원가입</a>
+  </p>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
-    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
-    import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js";
+  <p id="errorMsg" style="color:#d32f2f;text-align:center;margin-top:12px"></p>
+</div>
 
-    const firebaseConfig = {
-      apiKey: globalThis.FIREBASE_API_KEY,
-      authDomain: globalThis.FIREBASE_AUTH_DOMAIN,
-      databaseURL: globalThis.FIREBASE_DB_URL,
-      projectId: globalThis.FIREBASE_PROJECT_ID,
-      storageBucket: globalThis.FIREBASE_STORAGE_BUCKET,
-      messagingSenderId: globalThis.FIREBASE_MESSAGING_SENDER_ID,
-      appId: globalThis.FIREBASE_APP_ID,
-      measurementId: globalThis.FIREBASE_MEASUREMENT_ID
-    };
+<script>
+const API_BASE = "https://chatchat-api.alexeom97.workers.dev";
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getDatabase(app);
+document.getElementById('loginForm').addEventListener('submit', async e => {
+  e.preventDefault();
 
-    window.showLogin = ()=>{document.getElementById('loginForm').style.display='block';document.getElementById('signupForm').style.display='none';document.querySelectorAll('.tab')[0].classList.add('active');document.querySelectorAll('.tab')[1].classList.remove('active');};
-    window.showSignup = ()=>{document.getElementById('loginForm').style.display='none';document.getElementById('signupForm').style.display='block';document.querySelectorAll('.tab')[0].classList.remove('active');document.querySelectorAll('.tab')[1].classList.add('active');};
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value;
+  const errEl = document.getElementById('errorMsg');
 
-    window.handleLogin = async (e)=>{
-      e.preventDefault();
-      const email=document.getElementById('loginEmail').value;
-      const password=document.getElementById('loginPassword').value;
-      const errorEl=document.getElementById('loginError');
-      errorEl.textContent='';
+  try {
+    await fetch(API_BASE + '/login', {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password })
+    });
 
-      try{await signInWithEmailAndPassword(auth,email,password);window.location.href='index.html';}
-      catch(error){errorEl.textContent='로그인 실패: '+error.message;}
-    };
-
-    window.handleSignup=async(e)=>{
-      e.preventDefault();
-      const username=document.getElementById('signupUsername').value.trim();
-      const email=document.getElementById('signupEmail').value;
-      const password=document.getElementById('signupPassword').value;
-      const errorEl=document.getElementById('signupError');
-      const successEl=document.getElementById('signupSuccess');
-      errorEl.textContent=''; successEl.textContent='';
-
-      try{
-        const userCredential=await createUserWithEmailAndPassword(auth,email,password);
-        await set(ref(db,'users/'+userCredential.user.uid),{username});
-        successEl.textContent='회원가입 성공! 로그인 페이지로 이동...';
-        setTimeout(()=>{window.location.href='index.html';},1500);
-      }catch(error){errorEl.textContent='회원가입 실패: '+error.message;}
-    };
-  </script>
+    location.href = '/index.html';
+  } catch (err) {
+    errEl.textContent = err.message || '로그인 실패';
+  }
+});
+</script>
 </body>
 </html>
