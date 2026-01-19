@@ -153,6 +153,36 @@
       white-space: pre-wrap;
       word-break: break-word;
       backdrop-filter: blur(4px);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .message-text {
+      flex: 1;
+      text-align: left;
+    }
+
+    .more-btn {
+      width: auto;
+      padding: 8px 16px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: white;
+      background: var(--accent);
+      border: none;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      margin: 0;
+      flex-shrink: 0;
+    }
+
+    .more-btn:hover {
+      background: var(--accent-hover);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(54,99,255,0.35);
     }
 
     .center-hint {
@@ -339,7 +369,16 @@ async function loadMessages(username) {
       list.innerHTML = `<li style="text-align:center;color:#777">아직 받은 메시지가 없습니다</li>`;
     } else {
       list.innerHTML = messages
-        .map(m => `<li>${escapeHtml(m.content)}</li>`)
+        .map(m => {
+          const content = escapeHtml(m.content);
+          const displayText = content.length > 20 ? content.substring(0, 20) + '...' : content;
+          return `
+            <li>
+              <span class="message-text">${displayText}</span>
+              <button class="more-btn" onclick="location.href='dash.html'">더보기</button>
+            </li>
+          `;
+        })
         .join("");
     }
   } catch (e) {
