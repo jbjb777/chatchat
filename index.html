@@ -155,6 +155,21 @@
       backdrop-filter: blur(4px);
     }
      
+    /* 스켈레톤 UI */
+    .skeleton {
+      background: linear-gradient(90deg, #2a2a2a 25%, #333 50%, #2a2a2a 75%);
+      background-size: 200% 100%;
+      animation: skeleton-loading 1.5s infinite;
+      border-radius: 12px;
+      height: 68px;
+      margin-bottom: 10px;
+    }
+
+    @keyframes skeleton-loading {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+     
     .center-hint {
       text-align: center;
       color: var(--text-sub);
@@ -199,7 +214,6 @@
       transform: translateY(-1px);
     }
      
-    /* 푸터 스타일 */
     footer {
       background: rgba(15, 15, 15, 0.75);
       border-top: 1px solid rgba(34, 34, 34, 0.6);
@@ -251,7 +265,7 @@
 </footer>
 
  <script>
-// ── 기존 스크립트 그대로 유지 ──
+// ── 수정된 스크립트 ──
 const API_BASE = "https://chatchat-api.alexeom97.workers.dev";
 
 function getToken() {
@@ -320,26 +334,60 @@ function showDashboard(username) {
       <h4>받은 메시지</h4>
       <button class="more-btn" id="moreBtn">더보기</button>
     </div>
-    <ul id="messagesList"><li style="text-align:center;color:#777">불러오는 중...</li></ul>
+    <ul id="messagesList">
+      ${Array(7).fill().map(() => `<li class="skeleton"></li>`).join("")}
+    </ul>
     
     <button class="secondary" id="logoutBtn">로그아웃</button>
   `;
   
   document.getElementById("copyBtn").onclick = () => {
-    navigator.clipboard.writeText(myLink);
-    alert("링크가 복사되었습니다!");
+    navigator.clipboard.writeText(myLink).then(() => {
+      alert("링크가 복사되었습니다!");
+    });
   };
+  
   document.getElementById("logoutBtn").onclick = logout;
   document.getElementById("moreBtn").onclick = () => {
     location.href = "dash.html";
   };
   
+  // 최초 로드 + 주기적 갱신
   loadMessages(username);
+  setInterval(() => loadMessages(username), 3000);
 }
 
-/* ───────── Logic ───────── */
+async function loadMessages(username) {
+  const list = document.getElementById("messagesList");
+  if (!list) return;
 
-async function sendMessage(toUsername) {
+  try {
+    const { messages = [] } = await api(`/messages?username=${username}`);
+    
+    // 최신순 정렬 (필요시 - 서버가 최신순을 보장하지 않을 경우 대비)
+    // messages.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt)); 
+    
+    // 최근 7개만
+    const recentMessages = messages.slice(0, 7);
+
+    if (recentMessages.length === 0) {
+      list.innerHTML = `<li style="text-align:center;color:#777">아직 받은 메시지가 없습니다</li>`;
+    } else {
+      list.innerHTML = recentMessages
+        .map(m => {
+          const content = escapeHtml(m.content || "");
+          const displayContent = content.length > 20 ? content.substring(0, 20) + '...' : content;
+          return `<li>${displayContent}</li>`;
+        })
+        .join("");
+    }
+  } catch (e) {
+    list.innerHTML = 
+      `<li style="text-align:center;color:#ff5252">메시지 불러오기 실패</li>`;
+  }
+}
+
+function sendMessage(toUsername) {
   const input = document.getElementById("msgContent");
   const status = document.getElementById("sendStatus");
   const content = input?.value?.trim();
@@ -350,38 +398,16 @@ async function sendMessage(toUsername) {
     return;
   }
   
-  try {
-    await api("/send", "POST", { toUsername, content });
-    status.textContent = "✅ 전송 완료!";
-    status.className = "status success";
-    input.value = "";
-  } catch (e) {
-    status.textContent = "전송 실패 : " + e.message;
-    status.className = "status error";
-  }
-}
-
-async function loadMessages(username) {
-  try {
-    const { messages = [] } = await api(`/messages?username=${username}`);
-    const list = document.getElementById("messagesList");
-    if (!list) return;
-    
-    if (messages.length === 0) {
-      list.innerHTML = `<li style="text-align:center;color:#777">아직 받은 메시지가 없습니다</li>`;
-    } else {
-      list.innerHTML = messages
-        .map(m => {
-          const content = escapeHtml(m.content);
-          const displayContent = content.length > 20 ? content.substring(0, 20) + '...' : content;
-          return `<li>${displayContent}</li>`;
-        })
-        .join("");
-    }
-  } catch (e) {
-    document.getElementById("messagesList").innerHTML =
-      `<li style="text-align:center;color:#ff5252">메시지 불러오기 실패</li>`;
-  }
+  api("/send", "POST", { toUsername, content })
+    .then(() => {
+      status.textContent = "✅ 전송 완료!";
+      status.className = "status success";
+      input.value = "";
+    })
+    .catch(e => {
+      status.textContent = "전송 실패 : " + e.message;
+      status.className = "status error";
+    });
 }
 
 function logout() {
