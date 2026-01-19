@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>익명 메시지함 - 대시보드</title>
+  <style>
+    :root {
+      --bg: #121212;
+      --card-bg: #1e1e1e;
+      --border: #333;
+      --text: #e0e0e0;
+      --text-sub: #aaaaaa;
+      --accent: #3663FF;
+      --accent-hover: #4d7aff;
+      --radius: 16px;
+    }
+     
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+     
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: url('back.png') no-repeat center center fixed;
+      background-size: cover;
+      color: var(--text);
+      min-height: 100vh;
+      padding: 24px 16px;
+      display: flex;
+      flex-direction: column;
+    }
+     
+    main {
+      flex: 1;
+    }
+     
+    h1 {
+      text-align: center;
+      font-size: 2.1rem;
+      font-weight: 700;
+      margin-bottom: 1.8rem;
+      letter-spacing: -0.6px;
+    }
+     
+    .box {
+      max-width: 520px;
+      margin: 0 auto;
+      background: rgba(30, 30, 30, 0.72);
+      border: 1px solid rgba(51, 51, 51, 0.6);
+      border-radius: var(--radius);
+      padding: 32px 28px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.45);
+      backdrop-filter: blur(12px) saturate(160%);
+      -webkit-backdrop-filter: blur(12px) saturate(160%);
+    }
+     
+    h3, h4 {
+      text-align: center;
+      margin-bottom: 1.4rem;
+      font-weight: 600;
+    }
+     
+    textarea {
+      width: 100%;
+      min-height: 140px;
+      padding: 14px 16px;
+      background: rgba(26, 26, 26, 0.75);
+      border: 1px solid rgba(68, 68, 68, 0.7);
+      border-radius: 12px;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 1rem;
+      resize: vertical;
+      margin-bottom: 1.2rem;
+      outline: none;
+      backdrop-filter: blur(4px);
+    }
+     
+    textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(54,99,255,0.2);
+      background: rgba(26, 26, 26, 0.85);
+    }
+     
+    button {
+      width: 100%;
+      padding: 16px;
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: white;
+      background: var(--accent);
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      margin-top: 0.6rem;
+    }
+     
+    button:hover {
+      background: var(--accent-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(54,99,255,0.35);
+    }
+     
+    .secondary {
+      background: rgba(44, 44, 44, 0.7);
+      color: #ccc;
+      backdrop-filter: blur(6px);
+    }
+     
+    .secondary:hover {
+      background: rgba(56, 56, 56, 0.8);
+    }
+     
+    .status {
+      margin-top: 1rem;
+      font-size: 0.95rem;
+      text-align: center;
+    }
+     
+    .success { color: #4caf50; }
+    .error   { color: #ff5252; }
+     
+    .link-box {
+      background: rgba(26, 26, 26, 0.75);
+      border: 1px solid rgba(68, 68, 68, 0.7);
+      padding: 14px;
+      border-radius: 12px;
+      word-break: break-all;
+      font-size: 0.95rem;
+      margin: 10px 0 16px;
+      color: #a0d2ff;
+      backdrop-filter: blur(4px);
+    }
+     
+    ul {
+      list-style: none;
+      padding: 0;
+      margin-top: 1.2rem;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+     
+    li {
+      background: rgba(37, 37, 37, 0.75);
+      border: 1px solid rgba(51, 51, 51, 0.6);
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin-bottom: 10px;
+      font-size: 0.98rem;
+      line-height: 1.45;
+      white-space: pre-wrap;
+      word-break: break-word;
+      backdrop-filter: blur(4px);
+      cursor: pointer;
+    }
+     
+    /* 스켈레톤 UI */
+    .skeleton {
+      background: linear-gradient(90deg, #2a2a2a 25%, #333 50%, #2a2a2a 75%);
+      background-size: 200% 100%;
+      animation: skeleton-loading 1.5s infinite;
+      border-radius: 12px;
+      height: 68px;
+      margin-bottom: 10px;
+    }
+
+    @keyframes skeleton-loading {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+     
+    .center-hint {
+      text-align: center;
+      color: var(--text-sub);
+      margin: 2rem 0 1rem;
+      font-size: 0.95rem;
+    }
+     
+    a {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 600;
+    }
+     
+    a:hover {
+      color: var(--accent-hover);
+      text-decoration: underline;
+    }
+
+    .messages-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.4rem;
+    }
+
+    .messages-header h4 {
+      margin: 0;
+      text-align: left;
+    }
+
+    /* 모달 스타일 */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.4);
+      padding-top: 60px;
+    }
+
+    .modal-content {
+      background-color: var(--card-bg);
+      margin: 5% auto;
+      padding: 20px;
+      border: 1px solid var(--border);
+      width: 80%;
+      max-width: 600px;
+      border-radius: 12px;
+      color: var(--text);
+    }
+
+    .close {
+      color: var(--text-sub);
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+    }
+
+    .close:hover,
+    .close:focus {
+      color: var(--text);
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .full-message {
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-size: 1rem;
+      line-height: 1.5;
+    }
+     
+    footer {
+      background: rgba(15, 15, 15, 0.75);
+      border-top: 1px solid rgba(34, 34, 34, 0.6);
+      padding: 28px 20px;
+      text-align: center;
+      font-size: 0.92rem;
+      color: #777;
+      margin-top: 3rem;
+      backdrop-filter: blur(10px);
+    }
+     
+    .footer-text {
+      max-width: 640px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+     
+    .footer-link {
+      color: #5a8aff;
+      text-decoration: none;
+      font-weight: 500;
+    }
+     
+    .footer-link:hover {
+      color: #7aa0ff;
+      text-decoration: underline;
+    }
+     
+    @media (max-width: 520px) {
+      .box {
+        padding: 24px 20px;
+      }
+      ul {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+ <main>
+  <h1>💬 익명 메시지함</h1>
+  <div class="box" id="mainContainer"></div>
+  <div id="messageModal" class="modal">
+    <div class="modal-content">
+      <span class="close" id="closeModal">&times;</span>
+      <h4>전체 메시지</h4>
+      <p id="fullMessageContent" class="full-message"></p>
+    </div>
+  </div>
+</main>
+
+ <footer>
+  <div class="footer-text">
+    이 사이트는 <a href="https://sharer.jbjb.r-e.kr/user?id=jbeom&nickname=JB777"
+                    target="_blank"
+                    class="footer-link">JB777</a>이 만들었습니다!
+  </div>
+</footer>
+
+ <script>
+// ── 스크립트 ──
+const API_BASE = "https://chatchat-api.alexeom97.workers.dev";
+
+function getToken() {
+  return localStorage.getItem("authToken");
+}
+function setToken(t) {
+  if (t) localStorage.setItem("authToken", t);
+  else localStorage.removeItem("authToken");
+}
+
+async function api(endpoint, method = "GET", body = null) {
+  const headers = { "Content-Type": "application/json" };
+  const token = getToken();
+  if (token) headers.Authorization = `Bearer ${token}`;
+  
+  const res = await fetch(API_BASE + endpoint, {
+    method,
+    headers,
+    body: body ? JSON.stringify(body) : null
+  });
+  
+  const text = await res.text();
+  let data;
+  try { data = JSON.parse(text); } catch { data = { error: text }; }
+  
+  if (!res.ok) throw new Error(data.error || "요청 실패");
+  return data;
+}
+
+/* ───────── UI ───────── */
+
+function showDashboard(username) {
+  const el = document.getElementById("mainContainer");
+  if (!el) return;
+  
+  const myLink = `${location.origin}/?u=${username}`; // 공유 링크는 메인 페이지로
+  
+  el.innerHTML = `
+    <h3>📬 ${username}의 메시지함</h3>
+    
+    <div style="margin:1.8rem 0 2.2rem;">
+      <div style="font-weight:600; margin-bottom:0.6rem; text-align:center;">내 링크 (공유하기)</div>
+      <div class="link-box" id="myLink">${myLink}</div>
+      <button class="secondary" id="copyBtn">링크 복사</button>
+    </div>
+    
+    <div class="messages-header">
+      <h4>받은 메시지</h4>
+    </div>
+    <ul id="messagesList">
+      ${Array(10).fill().map(() => `<li class="skeleton"></li>`).join("")}
+    </ul>
+    
+    <button class="secondary" id="logoutBtn">로그아웃</button>
+  `;
+  
+  document.getElementById("copyBtn").onclick = () => {
+    navigator.clipboard.writeText(myLink).then(() => {
+      alert("링크가 복사되었습니다!");
+    });
+  };
+  
+  document.getElementById("logoutBtn").onclick = logout;
+  
+  // 모달 설정
+  const modal = document.getElementById("messageModal");
+  const closeBtn = document.getElementById("closeModal");
+  closeBtn.onclick = () => { modal.style.display = "none"; };
+  window.onclick = (event) => {
+    if (event.target === modal) {
+      modal.style.display = "none";
+    }
+  };
+  
+  // 최초 로드 + 주기적 갱신
+  loadMessages(username);
+  setInterval(() => loadMessages(username), 3000);
+}
+
+let allMessages = []; // 전체 메시지 저장
+
+async function loadMessages(username) {
+  const list = document.getElementById("messagesList");
+  if (!list) return;
+
+  try {
+    const { messages = [] } = await api(`/messages?username=${username}`);
+    
+    // 최신순 정렬 (서버가 최신순을 보장하지 않을 경우)
+    // messages.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
+    
+    allMessages = messages; // 전체 저장
+
+    if (allMessages.length === 0) {
+      list.innerHTML = `<li style="text-align:center;color:#777; grid-column: span 2;">아직 받은 메시지가 없습니다</li>`;
+    } else {
+      list.innerHTML = allMessages
+        .map((m, index) => {
+          const content = escapeHtml(m.content || "");
+          const displayContent = content.length > 20 ? content.substring(0, 20) + '...' : content;
+          return `<li data-index="${index}">${displayContent}</li>`;
+        })
+        .join("");
+      
+      // 클릭 이벤트 추가
+      const items = list.querySelectorAll('li');
+      items.forEach(item => {
+        item.onclick = (e) => {
+          const index = e.target.dataset.index;
+          const fullContent = escapeHtml(allMessages[index].content || "");
+          document.getElementById("fullMessageContent").textContent = fullContent;
+          document.getElementById("messageModal").style.display = "block";
+        };
+      });
+    }
+  } catch (e) {
+    list.innerHTML = 
+      `<li style="text-align:center;color:#ff5252; grid-column: span 2;">메시지 불러오기 실패</li>`;
+  }
+}
+
+function logout() {
+  localStorage.removeItem("authToken");
+  localStorage.removeItem("currentUsername");
+  location.href = "login.html";
+}
+
+function escapeHtml(str) {
+  return str.replace(/[&<>"']/g, m =>
+    ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" }[m])
+  );
+}
+
+/* ───────── Page Load ───────── */
+
+(async () => {
+  const storedUsername = localStorage.getItem("currentUsername");
+  
+  if (storedUsername && getToken()) {
+    showDashboard(storedUsername);
+  } else {
+    location.href = "login.html";
+  }
+})();
+</script>
+
+</body>
+</html>
