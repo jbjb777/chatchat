@@ -108,7 +108,7 @@
 
   <div class="group">
     <label>닉네임 (회원가입 시)</label>
-    <input id="username" type="text" placeholder="닉네임" />
+    <input id="username" type="text" placeholder="닉네임" autocomplete="username" />
   </div>
 
   <button id="signupBtn">회원가입</button>
@@ -133,7 +133,7 @@ function setLoading(btn, loading) {
   btn.disabled = loading;
   btn.textContent = loading
     ? "처리 중..."
-    : btn === signupBtn ? "회원가입" : "로그인";
+    : (btn === signupBtn ? "회원가입" : "로그인");
 }
 
 async function login(email, password) {
@@ -142,6 +142,7 @@ async function login(email, password) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email, password })
   });
+
   const data = await res.json();
   if (!res.ok) throw new Error(data.error || "로그인 실패");
   return data;
@@ -152,7 +153,7 @@ signupBtn.onclick = async () => {
   successEl.textContent = "";
 
   const email = emailEl.value.trim();
-  const password = passwordEl.value;
+  const password = passwordEl.value.trim();
   const username = usernameEl.value.trim();
 
   if (!email || !password || !username) {
@@ -163,9 +164,20 @@ signupBtn.onclick = async () => {
   setLoading(signupBtn, true);
 
   try {
-    // Firebase Auth REST: signUp
-    const res = await fetch(
-      `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyCi0cus6PFFospMymbmILW7jHFu3OBoABY`,
+    // 1. 닉네임 중복 체크
+    const checkRes = await fetch(`${API_BASE}/check-username?username=${encodeURIComponent(username)}`);
+    if (!checkRes.ok) throw new Error("닉네임 확인 중 오류 발생");
+
+    const { exists } = await checkRes.json();
+
+    if (exists) {
+      errorEl.textContent = "이미 사용 중인 닉네임입니다.";
+      return;
+    }
+
+    // 2. Firebase 회원가입
+    const signUpRes = await fetch(
+      "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyCi0cus6PFFospMymbmILW7jHFu3OBoABY",
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -176,27 +188,33 @@ signupBtn.onclick = async () => {
         })
       }
     );
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error?.message || "회원가입 실패");
 
-    // 사용자 프로필 저장 (Realtime DB)
+    const signUpData = await signUpRes.json();
+    if (!signUpRes.ok) {
+      throw new Error(signUpData.error?.message || "회원가입 실패");
+    }
+
+    // 3. 사용자 정보 저장 (Realtime Database)
     await fetch(
-      "https://chatchat-98586-default-rtdb.firebaseio.com/users/" +
-        data.localId +
-        ".json",
+      `https://chatchat-98586-default-rtdb.firebaseio.com/users/${signUpData.localId}.json`,
       {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           username,
+          email,
           createdAt: Date.now()
         })
       }
     );
 
-    localStorage.setItem("authToken", data.idToken);
+    localStorage.setItem("authToken", signUpData.idToken);
     successEl.textContent = "회원가입 성공! 이동 중...";
-    setTimeout(() => (location.href = "index.html"), 1000);
+    
+    setTimeout(() => {
+      location.href = "index.html";
+    }, 1200);
+
   } catch (e) {
     errorEl.textContent = e.message;
   } finally {
@@ -209,7 +227,7 @@ loginBtn.onclick = async () => {
   successEl.textContent = "";
 
   const email = emailEl.value.trim();
-  const password = passwordEl.value;
+  const password = passwordEl.value.trim();
 
   if (!email || !password) {
     errorEl.textContent = "이메일과 비밀번호를 입력해주세요";
@@ -222,7 +240,10 @@ loginBtn.onclick = async () => {
     const data = await login(email, password);
     localStorage.setItem("authToken", data.token);
     successEl.textContent = "로그인 성공! 이동 중...";
-    setTimeout(() => (location.href = "index.html"), 800);
+    
+    setTimeout(() => {
+      location.href = "index.html";
+    }, 1000);
   } catch (e) {
     errorEl.textContent = e.message;
   } finally {
