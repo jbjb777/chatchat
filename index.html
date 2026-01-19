@@ -209,7 +209,8 @@ async function loadMessages(username) {
 }
 
 function logout() {
-  setToken(null);
+  localStorage.removeItem("authToken");
+  localStorage.removeItem("currentUsername");
   location.href = "login.html";
 }
 
@@ -230,15 +231,14 @@ function escapeHtml(str) {
     return;
   }
 
-  try {
-    const user = await api("/me");
-    if (user?.username) {
-      showDashboard(user.username);
-    } else {
-      showSendForm();
-    }
-  } catch {
-    showSendForm();
+  // /me 대신 localStorage에서 username 가져오기
+  const storedUsername = localStorage.getItem("currentUsername");
+
+  if (storedUsername && getToken()) {
+    showDashboard(storedUsername);
+  } else {
+    // 토큰 또는 username이 없으면 로그인 페이지로
+    location.href = "login.html";
   }
 })();
 </script>
