@@ -2,90 +2,222 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>익명 메시지함</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
-    body {
+    :root {
+      --bg: #121212;
+      --card-bg: #1e1e1e;
+      --border: #333;
+      --text: #e0e0e0;
+      --text-sub: #aaaaaa;
+      --accent: #3663FF;
+      --accent-hover: #4d7aff;
+      --radius: 16px;
+    }
+
+    * {
       margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
       font-family: system-ui, -apple-system, sans-serif;
-      background: #f6f7fb;
-      padding: 20px;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 24px 16px;
+      display: flex;
+      flex-direction: column;
     }
-    h1 { text-align: center; margin-bottom: 16px; }
+
+    main {
+      flex: 1;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 2.1rem;
+      font-weight: 700;
+      margin-bottom: 1.8rem;
+      letter-spacing: -0.6px;
+    }
+
     .box {
-      max-width: 480px;
-      margin: auto;
-      background: white;
-      border-radius: 14px;
-      padding: 20px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      max-width: 520px;
+      margin: 0 auto;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 32px 28px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.45);
+      backdrop-filter: blur(10px);
     }
+
+    h3, h4 {
+      text-align: center;
+      margin-bottom: 1.4rem;
+      font-weight: 600;
+    }
+
     textarea {
       width: 100%;
-      min-height: 100px;
-      padding: 12px;
-      border-radius: 10px;
-      border: 2px solid #ddd;
-      font-size: 15px;
+      min-height: 140px;
+      padding: 14px 16px;
+      background: #1a1a1a;
+      border: 1px solid #444;
+      border-radius: 12px;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 1rem;
       resize: vertical;
-    }
-    textarea:focus {
+      margin-bottom: 1.2rem;
       outline: none;
-      border-color: #6b7cff;
     }
+
+    textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(54,99,255,0.2);
+    }
+
     button {
       width: 100%;
-      padding: 12px;
-      border-radius: 10px;
-      border: none;
-      background: #6b7cff;
-      color: white;
-      font-size: 15px;
+      padding: 16px;
+      font-size: 1.05rem;
       font-weight: 600;
-      margin-top: 10px;
+      color: white;
+      background: var(--accent);
+      border: none;
+      border-radius: 30px;
       cursor: pointer;
+      transition: all 0.25s ease;
+      margin-top: 0.6rem;
     }
-    button:hover { background: #5a6bf0; }
+
+    button:hover {
+      background: var(--accent-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(54,99,255,0.35);
+    }
+
     .secondary {
-      background: #eee;
-      color: #333;
+      background: #2c2c2c;
+      color: #ccc;
     }
+
+    .secondary:hover {
+      background: #383838;
+    }
+
     .status {
-      margin-top: 8px;
-      font-size: 14px;
+      margin-top: 1rem;
+      font-size: 0.95rem;
       text-align: center;
     }
-    .success { color: #2e7d32; }
-    .error { color: #c62828; }
+
+    .success { color: #4caf50; }
+    .error   { color: #ff5252; }
+
     .link-box {
-      background: #f1f3f8;
-      padding: 10px;
-      border-radius: 8px;
+      background: #1a1a1a;
+      border: 1px solid #444;
+      padding: 14px;
+      border-radius: 12px;
       word-break: break-all;
-      font-size: 14px;
-      margin-top: 6px;
+      font-size: 0.95rem;
+      margin: 10px 0 16px;
+      color: #a0d2ff;
     }
+
     ul {
       list-style: none;
       padding: 0;
-      margin-top: 12px;
+      margin-top: 1.2rem;
     }
+
     li {
-      background: #f7f8fc;
-      border-radius: 10px;
-      padding: 10px;
-      margin-bottom: 8px;
-      font-size: 14px;
+      background: #252525;
+      border: 1px solid #333;
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin-bottom: 10px;
+      font-size: 0.98rem;
+      line-height: 1.45;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .center-hint {
+      text-align: center;
+      color: var(--text-sub);
+      margin: 2rem 0 1rem;
+      font-size: 0.95rem;
+    }
+
+    a {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    a:hover {
+      color: var(--accent-hover);
+      text-decoration: underline;
+    }
+
+    /* 푸터 스타일 */
+    footer {
+      background: #0f0f0f;
+      border-top: 1px solid #222;
+      padding: 28px 20px;
+      text-align: center;
+      font-size: 0.92rem;
+      color: #777;
+      margin-top: 3rem;
+    }
+
+    .footer-text {
+      max-width: 640px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    .footer-link {
+      color: #5a8aff;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .footer-link:hover {
+      color: #7aa0ff;
+      text-decoration: underline;
+    }
+
+    @media (max-width: 520px) {
+      .box {
+        padding: 24px 20px;
+      }
     }
   </style>
 </head>
 <body>
 
-<h1>💬 익명 메시지함</h1>
+<main>
+  <h1>💬 익명 메시지함</h1>
+  <div class="box" id="mainContainer"></div>
+</main>
 
-<div class="box" id="mainContainer"></div>
+<footer>
+  <div class="footer-text">
+    이 사이트는 <a href="https://sharer.jbjb.r-e.kr/user?id=jbeom&nickname=JB777" 
+                   target="_blank" 
+                   class="footer-link">JB777</a>이 만들었습니다!
+  </div>
+</footer>
 
 <script>
+// ── 기존 스크립트 그대로 유지 ──
 const API_BASE = "https://chatchat-api.alexeom97.workers.dev";
 
 function getToken() {
@@ -122,14 +254,14 @@ function showSendForm(targetUsername = "") {
   if (!el) return;
 
   el.innerHTML = `
-    <h3 style="text-align:center">익명 메시지 보내기</h3>
-    <textarea id="msgContent" placeholder="메시지를 입력하세요" maxlength="1000"></textarea>
+    <h3>익명 메시지 보내기</h3>
+    <textarea id="msgContent" placeholder="메시지를 입력하세요..." maxlength="1000"></textarea>
     <button id="sendBtn">보내기</button>
     <p id="sendStatus" class="status"></p>
-    <p style="text-align:center;margin-top:14px">
-      나도 만들기 →
-      <a href="login.html" style="color:#6b7cff;font-weight:600">로그인</a>
-    </p>
+
+    <div class="center-hint">
+      나도 만들기 → <a href="login.html">로그인</a>
+    </div>
   `;
 
   document.getElementById("sendBtn").onclick = sendMessage.bind(null, targetUsername);
@@ -142,23 +274,23 @@ function showDashboard(username) {
   const myLink = `${location.origin}${location.pathname}?u=${username}`;
 
   el.innerHTML = `
-    <h3 style="text-align:center">📬 ${username}의 메시지함</h3>
+    <h3>📬 ${username}의 메시지함</h3>
 
-    <div style="margin:14px 0">
-      <div style="font-weight:600">내 링크 (공유하기)</div>
+    <div style="margin:1.8rem 0 2.2rem;">
+      <div style="font-weight:600; margin-bottom:0.6rem; text-align:center;">내 링크 (공유하기)</div>
       <div class="link-box" id="myLink">${myLink}</div>
       <button class="secondary" id="copyBtn">링크 복사</button>
     </div>
 
-    <h4 style="margin-top:18px">받은 메시지</h4>
-    <ul id="messagesList"><li style="text-align:center;color:#888">불러오는 중...</li></ul>
+    <h4>받은 메시지</h4>
+    <ul id="messagesList"><li style="text-align:center;color:#777">불러오는 중...</li></ul>
 
     <button class="secondary" id="logoutBtn">로그아웃</button>
   `;
 
   document.getElementById("copyBtn").onclick = () => {
     navigator.clipboard.writeText(myLink);
-    alert("복사됨!");
+    alert("링크가 복사되었습니다!");
   };
   document.getElementById("logoutBtn").onclick = logout;
 
@@ -184,7 +316,7 @@ async function sendMessage(toUsername) {
     status.className = "status success";
     input.value = "";
   } catch (e) {
-    status.textContent = "전송 실패: " + e.message;
+    status.textContent = "전송 실패 : " + e.message;
     status.className = "status error";
   }
 }
@@ -196,7 +328,7 @@ async function loadMessages(username) {
     if (!list) return;
 
     if (messages.length === 0) {
-      list.innerHTML = `<li style="text-align:center;color:#888">아직 메시지가 없습니다</li>`;
+      list.innerHTML = `<li style="text-align:center;color:#777">아직 받은 메시지가 없습니다</li>`;
     } else {
       list.innerHTML = messages
         .map(m => `<li>${escapeHtml(m.content)}</li>`)
@@ -204,7 +336,7 @@ async function loadMessages(username) {
     }
   } catch (e) {
     document.getElementById("messagesList").innerHTML =
-      `<li style="text-align:center;color:#c62828">불러오기 실패</li>`;
+      `<li style="text-align:center;color:#ff5252">메시지 불러오기 실패</li>`;
   }
 }
 
@@ -231,13 +363,11 @@ function escapeHtml(str) {
     return;
   }
 
-  // /me 대신 localStorage에서 username 가져오기
   const storedUsername = localStorage.getItem("currentUsername");
 
   if (storedUsername && getToken()) {
     showDashboard(storedUsername);
   } else {
-    // 토큰 또는 username이 없으면 로그인 페이지로
     location.href = "login.html";
   }
 })();
