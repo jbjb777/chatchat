@@ -117,7 +117,7 @@ async function api(endpoint, method = "GET", body = null) {
 
 /* ───────── UI ───────── */
 
-function showSendForm(targetUid = "") {
+function showSendForm(targetUsername = "") {
   const el = document.getElementById("mainContainer");
   if (!el) return;
 
@@ -132,20 +132,20 @@ function showSendForm(targetUid = "") {
     </p>
   `;
 
-  document.getElementById("sendBtn").onclick = sendMessage.bind(null, targetUid);
+  document.getElementById("sendBtn").onclick = sendMessage.bind(null, targetUsername);
 }
 
-function showDashboard(uid) {
+function showDashboard(username) {
   const el = document.getElementById("mainContainer");
   if (!el) return;
 
-  const myLink = `${location.origin}${location.pathname}?u=${uid}`;
+  const myLink = `${location.origin}${location.pathname}?u=${username}`;
 
   el.innerHTML = `
-    <h3 style="text-align:center">📬 나의 메시지함</h3>
+    <h3 style="text-align:center">📬 ${username}의 메시지함</h3>
 
     <div style="margin:14px 0">
-      <div style="font-weight:600">내 링크</div>
+      <div style="font-weight:600">내 링크 (공유하기)</div>
       <div class="link-box" id="myLink">${myLink}</div>
       <button class="secondary" id="copyBtn">링크 복사</button>
     </div>
@@ -162,24 +162,24 @@ function showDashboard(uid) {
   };
   document.getElementById("logoutBtn").onclick = logout;
 
-  loadMessages(uid);
+  loadMessages(username);
 }
 
 /* ───────── Logic ───────── */
 
-async function sendMessage(toUid) {
+async function sendMessage(toUsername) {
   const input = document.getElementById("msgContent");
   const status = document.getElementById("sendStatus");
   const content = input?.value?.trim();
 
-  if (!content || !toUid) {
+  if (!content || !toUsername) {
     status.textContent = "메시지를 입력해주세요";
     status.className = "status error";
     return;
   }
 
   try {
-    await api("/send", "POST", { toUid, content });
+    await api("/send", "POST", { toUsername, content });
     status.textContent = "✅ 전송 완료!";
     status.className = "status success";
     input.value = "";
@@ -189,9 +189,9 @@ async function sendMessage(toUid) {
   }
 }
 
-async function loadMessages(uid) {
+async function loadMessages(username) {
   try {
-    const { messages = [] } = await api(`/messages?uid=${uid}`);
+    const { messages = [] } = await api(`/messages?username=${username}`);
     const list = document.getElementById("messagesList");
     if (!list) return;
 
@@ -223,17 +223,17 @@ function escapeHtml(str) {
 
 (async () => {
   const params = new URLSearchParams(location.search);
-  const targetUid = params.get("u");
+  const targetUsername = params.get("u");
 
-  if (targetUid) {
-    showSendForm(targetUid);
+  if (targetUsername) {
+    showSendForm(targetUsername);
     return;
   }
 
   try {
     const user = await api("/me");
-    if (user?.uid) {
-      showDashboard(user.uid);
+    if (user?.username) {
+      showDashboard(user.username);
     } else {
       showSendForm();
     }
