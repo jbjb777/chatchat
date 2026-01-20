@@ -215,6 +215,78 @@
       background: rgba(77, 122, 255, 0.9);
       transform: translateY(-1px);
     }
+
+    /* 성공 페이지용 스타일 추가 */
+    .success-page {
+      text-align: center;
+      padding: 20px 0;
+    }
+
+    .success-img {
+      width: 120px;
+      height: auto;
+      margin: 0 auto 24px;
+      display: block;
+    }
+
+    .success-title {
+      font-size: 1.55rem;
+      font-weight: 700;
+      margin-bottom: 1.2rem;
+    }
+
+    .success-desc {
+      font-size: 1.05rem;
+      color: #4caf50;
+      margin-bottom: 2.2rem;
+    }
+
+    .action-btn {
+      margin: 12px 0;
+      padding: 16px;
+      font-size: 1.05rem;
+      font-weight: 600;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: all 0.25s;
+    }
+
+    .primary-action {
+      background: var(--accent);
+      color: white;
+      border: none;
+    }
+
+    .primary-action:hover {
+      background: var(--accent-hover);
+      transform: translateY(-2px);
+    }
+
+    .secondary-action {
+      background: transparent;
+      color: var(--accent);
+      border: 2px solid var(--accent);
+    }
+
+    .secondary-action:hover {
+      background: rgba(54,99,255,0.1);
+    }
+
+    .underline-link {
+      color: var(--accent);
+      text-decoration: underline;
+      font-weight: 500;
+      background: none;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      font-size: inherit;
+      font-family: inherit;
+    }
+
+    .underline-link:hover {
+      color: var(--accent-hover);
+    }
      
     footer {
       background: rgba(15, 15, 15, 0.75);
@@ -267,7 +339,6 @@
 </footer>
 
  <script>
-// ── 수정된 스크립트 ──
 const API_BASE = "https://chatchat-api.alexeom97.workers.dev";
 
 function getToken() {
@@ -297,24 +368,63 @@ async function api(endpoint, method = "GET", body = null) {
   return data;
 }
 
-/* ───────── UI ───────── */
+/* ───────── UI Functions ───────── */
 
 function showSendForm(targetUsername = "") {
   const el = document.getElementById("mainContainer");
   if (!el) return;
   
+  const displayName = targetUsername || "누군가";
+
   el.innerHTML = `
-    <h3>익명 메시지 보내기</h3>
+    <h3>${displayName}에게 익명 메시지 보내기</h3>
     <textarea id="msgContent" placeholder="메시지를 입력하세요..." maxlength="1000"></textarea>
     <button id="sendBtn">보내기</button>
     <p id="sendStatus" class="status"></p>
     
-    <div class="center-hint">
-      나도 만들기 → <a href="login.html">로그인</a>
+    <div style="text-align:center; margin-top:1.8rem; font-size:0.98rem;">
+      <button class="underline-link" onclick="location.href='index.html'">로그인하고 나만의 익명 메시지 받기</button>
     </div>
   `;
   
-  document.getElementById("sendBtn").onclick = sendMessage.bind(null, targetUsername);
+  document.getElementById("sendBtn").onclick = () => sendMessage(targetUsername);
+}
+
+function showSuccessPage() {
+  const el = document.getElementById("mainContainer");
+  if (!el) return;
+
+  el.innerHTML = `
+    <div class="success-page">
+      <img src="send.png" alt="전송 완료" class="success-img">
+      <div class="success-title">메시지가 보내졌습니다!</div>
+      <div class="success-desc">익명으로 잘 전달되었어요</div>
+      
+      <button class="action-btn primary-action" onclick="location.href='index.html'">나만의 메시지 받기</button>
+      <button class="action-btn secondary-action" onclick="location.reload()">다른 메시지 보내기</button>
+    </div>
+  `;
+}
+
+async function sendMessage(toUsername) {
+  const input = document.getElementById("msgContent");
+  const status = document.getElementById("sendStatus");
+  const content = input?.value?.trim();
+  
+  if (!content || !toUsername) {
+    status.textContent = "메시지를 입력해주세요";
+    status.className = "status error";
+    return;
+  }
+  
+  try {
+    await api("/send", "POST", { toUsername, content });
+    // 성공 → 성공 페이지로 전환
+    showSuccessPage();
+  } catch (e) {
+    status.textContent = "전송 실패 : " + e.message;
+    status.className = "status error";
+  }
 }
 
 function showDashboard(username) {
@@ -354,7 +464,6 @@ function showDashboard(username) {
     location.href = "dash.html";
   };
   
-  // 최초 로드 + 주기적 갱신
   loadMessages(username);
   setInterval(() => loadMessages(username), 3000);
 }
@@ -366,10 +475,6 @@ async function loadMessages(username) {
   try {
     const { messages = [] } = await api(`/messages?username=${username}`);
     
-    // 최신순 정렬 (필요시 - 서버가 최신순을 보장하지 않을 경우 대비)
-    // messages.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt)); 
-    
-    // 최근 7개만
     const recentMessages = messages.slice(0, 7);
 
     if (recentMessages.length === 0) {
@@ -387,29 +492,6 @@ async function loadMessages(username) {
     list.innerHTML = 
       `<li style="text-align:center;color:#ff5252">메시지 불러오기 실패</li>`;
   }
-}
-
-function sendMessage(toUsername) {
-  const input = document.getElementById("msgContent");
-  const status = document.getElementById("sendStatus");
-  const content = input?.value?.trim();
-  
-  if (!content || !toUsername) {
-    status.textContent = "메시지를 입력해주세요";
-    status.className = "status error";
-    return;
-  }
-  
-  api("/send", "POST", { toUsername, content })
-    .then(() => {
-      status.textContent = "✅ 전송 완료!";
-      status.className = "status success";
-      input.value = "";
-    })
-    .catch(e => {
-      status.textContent = "전송 실패 : " + e.message;
-      status.className = "status error";
-    });
 }
 
 function logout() {
