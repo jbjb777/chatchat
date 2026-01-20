@@ -8,8 +8,6 @@
   <style>
     :root {
       --bg: #121212;
-      --card-bg: #1e1e1e;
-      --border: #333;
       --text: #e0e0e0;
       --text-sub: #aaaaaa;
       --accent: #3663FF;
@@ -18,13 +16,13 @@
       --danger-hover: #ff6b6b;
       --radius: 16px;
     }
-   
+
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
     }
-   
+
     body {
       font-family: system-ui, -apple-system, sans-serif;
       background: url('back.png') no-repeat center center fixed;
@@ -35,11 +33,11 @@
       display: flex;
       flex-direction: column;
     }
-   
+
     main {
       flex: 1;
     }
-   
+
     h1 {
       text-align: center;
       font-size: 2.1rem;
@@ -47,7 +45,12 @@
       margin-bottom: 1.8rem;
       letter-spacing: -0.6px;
     }
-   
+
+    .container {
+      max-width: 520px;
+      margin: 0 auto;
+    }
+
     .header-row {
       display: flex;
       align-items: center;
@@ -58,21 +61,21 @@
       display: flex;
       align-items: center;
       gap: 8px;
-      color: var(--accent);
-      text-decoration: none;
+      color: #ffffff;
       font-size: 1.1rem;
       font-weight: 500;
       cursor: pointer;
-      transition: color 0.2s;
+      transition: opacity 0.2s;
     }
 
     .back-btn:hover {
-      color: var(--accent-hover);
+      opacity: 0.75;
     }
 
     .back-btn img {
       width: 22px;
       height: 22px;
+      filter: brightness(0) invert(1); /* 흰색 아이콘 유지용 (필요시 제거) */
     }
 
     .page-title {
@@ -82,29 +85,7 @@
       font-weight: 700;
       margin: 0 12px;
     }
-   
-    textarea {
-      width: 100%;
-      min-height: 140px;
-      padding: 14px 16px;
-      background: rgba(26, 26, 26, 0.75);
-      border: 1px solid rgba(68, 68, 68, 0.7);
-      border-radius: 12px;
-      color: var(--text);
-      font-family: inherit;
-      font-size: 1rem;
-      resize: vertical;
-      margin-bottom: 1.2rem;
-      outline: none;
-      backdrop-filter: blur(4px);
-    }
-   
-    textarea:focus {
-      border-color: var(--accent);
-      box-shadow: 0 0 0 3px rgba(54,99,255,0.2);
-      background: rgba(26, 26, 26, 0.85);
-    }
-   
+
     button {
       width: 100%;
       padding: 16px;
@@ -118,39 +99,30 @@
       transition: all 0.25s ease;
       margin-top: 0.6rem;
     }
-   
+
     button:hover {
       background: var(--accent-hover);
       transform: translateY(-2px);
       box-shadow: 0 8px 24px rgba(54,99,255,0.35);
     }
-   
+
     .secondary {
-      background: rgba(44, 44, 44, 0.7);
-      color: #ccc;
-      backdrop-filter: blur(6px);
+      background: rgba(80,80,80,0.6);
+      color: #ddd;
     }
-   
+
     .secondary:hover {
-      background: rgba(56, 56, 56, 0.8);
+      background: rgba(100,100,100,0.8);
     }
 
     .danger {
       background: var(--danger);
     }
+
     .danger:hover {
       background: var(--danger-hover);
     }
-   
-    .status {
-      margin-top: 1rem;
-      font-size: 0.95rem;
-      text-align: center;
-    }
-   
-    .success { color: #4caf50; }
-    .error { color: #ff5252; }
-   
+
     ul {
       list-style: none;
       padding: 0;
@@ -159,82 +131,57 @@
       grid-template-columns: repeat(2, 1fr);
       gap: 12px 10px;
     }
-   
+
     li {
-      background: rgba(37, 37, 37, 0.6);
-      border: 1px solid rgba(51, 51, 51, 0.5);
+      background: rgba(40,40,40,0.55);
+      border: 1px solid rgba(70,70,70,0.4);
       border-radius: 12px;
       padding: 16px 18px;
       font-size: 0.98rem;
       line-height: 1.5;
       white-space: pre-wrap;
       word-break: break-word;
-      backdrop-filter: blur(6px);
+      backdrop-filter: blur(4px);
       cursor: pointer;
       transition: all 0.18s;
     }
+
     li:hover {
-      background: rgba(50,50,50,0.85);
+      background: rgba(60,60,60,0.75);
       transform: translateY(-1px);
     }
-   
-    /* 스켈레톤 UI */
+
     .skeleton {
       background: linear-gradient(90deg, #2a2a2a 25%, #333 50%, #2a2a2a 75%);
       background-size: 200% 100%;
       animation: skeleton-loading 1.5s infinite;
       border-radius: 12px;
       height: 72px;
-      margin-bottom: 10px;
     }
+
     @keyframes skeleton-loading {
       0% { background-position: 200% 0; }
       100% { background-position: -200% 0; }
     }
-   
-    .center-hint {
-      text-align: center;
-      color: var(--text-sub);
-      margin: 2rem 0 1rem;
-      font-size: 0.95rem;
-    }
-   
-    a {
-      color: var(--accent);
-      text-decoration: none;
-      font-weight: 600;
-    }
-   
-    a:hover {
-      color: var(--accent-hover);
-      text-decoration: underline;
-    }
 
-    .messages-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 1.4rem;
-    }
-
-    /* 메시지 상세 - 박스 느낌 최소화 */
-    .full-message-container {
+    .message-content-box {
+      background: rgba(30,30,30,0.65);
+      border: 1px solid rgba(70,70,70,0.5);
+      border-radius: var(--radius);
+      padding: 24px 28px;
+      backdrop-filter: blur(8px);
       white-space: pre-wrap;
       word-break: break-word;
       font-size: 1.05rem;
       line-height: 1.65;
-      padding: 0;
       min-height: 180px;
-      margin: 1rem auto;
-      max-width: 560px;
-      color: #e8e8e8;
+      margin: 1.4rem 0;
     }
 
-    /* 커스텀 모달 */
     .modal-overlay {
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,0.65);
+      background: rgba(0,0,0,0.7);
       backdrop-filter: blur(4px);
       display: flex;
       align-items: center;
@@ -242,44 +189,51 @@
       z-index: 1000;
       opacity: 0;
       pointer-events: none;
-      transition: opacity 0.3s ease;
+      transition: opacity 0.25s ease;
     }
+
     .modal-overlay.show {
       opacity: 1;
       pointer-events: all;
     }
+
     .modal-content {
-      background: rgba(30,30,30,0.92);
-      border: 1px solid rgba(60,60,60,0.8);
+      background: rgba(30,30,30,0.95);
+      border: 1px solid rgba(80,80,80,0.7);
       border-radius: var(--radius);
-      width: 90%;
+      width: 88%;
       max-width: 380px;
       padding: 28px 24px;
       text-align: center;
-      transform: scale(0.92);
+      transform: scale(0.9);
       opacity: 0;
-      transition: all 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+      transition: all 0.25s ease;
       backdrop-filter: blur(10px);
     }
+
     .modal-overlay.show .modal-content {
       transform: scale(1);
       opacity: 1;
     }
+
     .modal-title {
-      font-size: 1.28rem;
+      font-size: 1.3rem;
       font-weight: 700;
-      margin-bottom: 0.9rem;
+      margin-bottom: 1rem;
     }
+
     .modal-desc {
       color: var(--text-sub);
-      font-size: 0.96rem;
+      font-size: 0.97rem;
       line-height: 1.5;
       margin-bottom: 1.8rem;
     }
+
     .modal-buttons {
       display: flex;
       gap: 12px;
     }
+
     .modal-btn {
       flex: 1;
       padding: 14px;
@@ -288,24 +242,28 @@
       cursor: pointer;
       transition: all 0.2s;
     }
+
     .modal-btn.cancel {
-      background: rgba(60,60,60,0.7);
-      color: #ddd;
+      background: rgba(70,70,70,0.8);
+      color: #eee;
     }
+
     .modal-btn.cancel:hover {
-      background: rgba(80,80,80,0.9);
+      background: rgba(90,90,90,0.95);
     }
+
     .modal-btn.delete {
       background: var(--danger);
       color: white;
     }
+
     .modal-btn.delete:hover {
       background: var(--danger-hover);
     }
-   
+
     footer {
-      background: rgba(15, 15, 15, 0.75);
-      border-top: 1px solid rgba(34, 34, 34, 0.6);
+      background: rgba(15,15,15,0.7);
+      border-top: 1px solid rgba(50,50,50,0.5);
       padding: 28px 20px;
       text-align: center;
       font-size: 0.92rem;
@@ -313,24 +271,18 @@
       margin-top: 3rem;
       backdrop-filter: blur(10px);
     }
-   
-    .footer-text {
-      max-width: 640px;
-      margin: 0 auto;
-      line-height: 1.6;
-    }
-   
+
     .footer-link {
       color: #5a8aff;
       text-decoration: none;
       font-weight: 500;
     }
-   
+
     .footer-link:hover {
       color: #7aa0ff;
       text-decoration: underline;
     }
-   
+
     @media (max-width: 520px) {
       ul {
         grid-template-columns: 1fr;
@@ -339,12 +291,13 @@
   </style>
 </head>
 <body>
- <main>
+
+<main>
   <h1>💬 익명 메시지함</h1>
-  <div id="mainContainer"></div>
+  <div class="container" id="mainContainer"></div>
 </main>
 
-<!-- 커스텀 삭제 확인 모달 -->
+<!-- 삭제 확인 모달 -->
 <div class="modal-overlay" id="deleteModal">
   <div class="modal-content">
     <div class="modal-title">메시지를 삭제하시겠습니까?</div>
@@ -356,24 +309,19 @@
   </div>
 </div>
 
- <footer>
-  <div class="footer-text">
+<footer>
+  <div>
     이 사이트는 <a href="https://sharer.jbjb.r-e.kr/user?id=jbeom&nickname=JB777"
-                    target="_blank"
-                    class="footer-link">JB777</a>이 만들었습니다!
+                 target="_blank" class="footer-link">JB777</a>이 만들었습니다!
   </div>
 </footer>
 
- <script>
+<script>
 // ── 스크립트 ──
 const API_BASE = "https://chatchat-api.alexeom97.workers.dev";
 
 function getToken() {
   return localStorage.getItem("authToken");
-}
-function setToken(t) {
-  if (t) localStorage.setItem("authToken", t);
-  else localStorage.removeItem("authToken");
 }
 
 async function api(endpoint, method = "GET", body = null) {
@@ -393,12 +341,10 @@ async function api(endpoint, method = "GET", body = null) {
 }
 
 function escapeHtml(str) {
-  return str.replace(/[&<>"']/g, m =>
-    ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" }[m])
-  );
+  return str.replace(/[&<>"']/g, m => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#039;" }[m]));
 }
 
-/* ───────── 화면 전환 ───────── */
+/* ───────── 화면 렌더링 ───────── */
 function renderListScreen(username) {
   document.getElementById("mainContainer").innerHTML = `
     <div class="header-row">
@@ -407,9 +353,9 @@ function renderListScreen(username) {
       </div>
       <div class="page-title">📬 ${username}의 메시지함</div>
     </div>
-  
-    <div class="messages-header">
-      <h4>받은 메시지</h4>
+
+    <div style="margin:1.8rem 0 1.2rem;">
+      <h4 style="margin-bottom:0.8rem;">받은 메시지</h4>
     </div>
     <ul id="messagesList">
       ${Array(10).fill().map(() => `<li class="skeleton"></li>`).join("")}
@@ -435,11 +381,11 @@ function renderDetailScreen(message) {
       <div class="page-title">메시지 보기</div>
     </div>
 
-    <div class="full-message-container">
-      ${content || "<span style='color:#777;'>(내용 없음)</span>"}
+    <div class="message-content-box">
+      ${content || "<span style='color:#888;'>(내용 없음)</span>"}
     </div>
 
-    <button class="secondary" id="backToListBtn" style="margin:2rem 0 1.2rem;">
+    <button class="secondary" id="backToListBtn" style="margin:2.2rem 0 1.2rem;">
       목록으로 돌아가기
     </button>
     <button class="danger" id="deleteMessageBtn">메시지 삭제</button>
@@ -461,7 +407,8 @@ function showDeleteModal(messageId) {
   const confirmBtn = document.getElementById("confirmDelete");
   const cancelBtn = document.getElementById("cancelDelete");
 
-  const confirmHandler = async () => {
+  // 이전 이벤트 제거 후 새로 등록 (중복 방지)
+  const newConfirm = async () => {
     try {
       await api(`/messages/${messageId}`, "DELETE");
       alert("메시지가 삭제되었습니다.");
@@ -473,16 +420,13 @@ function showDeleteModal(messageId) {
     }
   };
 
-  const cancelHandler = () => closeModal();
+  const newCancel = () => closeModal();
 
-  confirmBtn.onclick = confirmHandler;
-  cancelBtn.onclick = cancelHandler;
+  confirmBtn.replaceWith(confirmBtn.cloneNode(true)); // 이벤트 초기화
+  cancelBtn.replaceWith(cancelBtn.cloneNode(true));
 
-  const cleanup = () => {
-    confirmBtn.onclick = null;
-    cancelBtn.onclick = null;
-  };
-  modal.addEventListener("transitionend", cleanup, { once: true });
+  document.getElementById("confirmDelete").onclick = newConfirm;
+  document.getElementById("cancelDelete").onclick = newCancel;
 }
 
 function closeModal() {
@@ -502,46 +446,39 @@ async function loadMessages() {
     allMessages = messages;
 
     if (allMessages.length === 0) {
-      list.innerHTML = `<li style="text-align:center;color:#777; grid-column: span 2;">아직 받은 메시지가 없습니다</li>`;
-    } else {
-      list.innerHTML = allMessages
-        .map((m, index) => {
-          const content = escapeHtml(m.content || "");
-          const display = content.length > 20 ? content.substring(0, 20) + '...' : content;
-          return `<li data-index="${index}">${display}</li>`;
-        })
-        .join("");
-
-      list.querySelectorAll("li").forEach(item => {
-        item.onclick = () => {
-          const idx = parseInt(item.dataset.index);
-          if (!isNaN(idx) && allMessages[idx]) {
-            renderDetailScreen(allMessages[idx]);
-          }
-        };
-      });
+      list.innerHTML = `<li style="text-align:center; color:#888; grid-column: span 2;">아직 받은 메시지가 없습니다</li>`;
+      return;
     }
-  } catch (e) {
-    list.innerHTML = `<li style="text-align:center;color:#ff5252; grid-column: span 2;">메시지 불러오기 실패</li>`;
-  }
-}
 
-function logout() {
-  localStorage.removeItem("authToken");
-  localStorage.removeItem("currentUsername");
-  location.href = "login.html";
+    list.innerHTML = allMessages
+      .map((m, i) => {
+        const txt = escapeHtml(m.content || "");
+        const short = txt.length > 20 ? txt.slice(0,20) + "..." : txt;
+        return `<li data-index="${i}">${short}</li>`;
+      })
+      .join("");
+
+    list.querySelectorAll("li").forEach(el => {
+      el.onclick = () => {
+        const idx = +el.dataset.index;
+        if (!isNaN(idx) && allMessages[idx]) {
+          renderDetailScreen(allMessages[idx]);
+        }
+      };
+    });
+  } catch (err) {
+    list.innerHTML = `<li style="text-align:center; color:#ff5252; grid-column: span 2;">메시지 불러오기 실패</li>`;
+  }
 }
 
 /* ───────── 초기 로드 ───────── */
 (async () => {
-  const storedUsername = localStorage.getItem("currentUsername");
-  if (storedUsername && getToken()) {
-    renderListScreen(storedUsername);
+  const username = localStorage.getItem("currentUsername");
+  if (username && getToken()) {
+    renderListScreen(username);
     setInterval(() => {
-      if (document.getElementById("messagesList")) {
-        loadMessages();
-      }
-    }, 3000);
+      if (document.getElementById("messagesList")) loadMessages();
+    }, 4000);
   } else {
     location.href = "login.html";
   }
