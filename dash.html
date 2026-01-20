@@ -16,13 +16,11 @@
       --danger-hover: #ff6b6b;
       --radius: 16px;
     }
-
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
     }
-
     body {
       font-family: system-ui, -apple-system, sans-serif;
       background: url('back.png') no-repeat center center fixed;
@@ -33,30 +31,36 @@
       display: flex;
       flex-direction: column;
     }
-
     main {
       flex: 1;
     }
-
-    h1 {
-      text-align: center;
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 2rem;
+    }
+    .header img {
+      height: 48px;
+      width: auto;
+      object-fit: contain;
+    }
+    .header .app-name {
       font-size: 2.1rem;
       font-weight: 700;
-      margin-bottom: 1.8rem;
       letter-spacing: -0.6px;
+      color: var(--text);
     }
-
     .container {
       max-width: 520px;
       margin: 0 auto;
     }
-
     .header-row {
       display: flex;
       align-items: center;
       margin-bottom: 1.6rem;
     }
-
     .back-btn {
       display: flex;
       align-items: center;
@@ -67,17 +71,14 @@
       cursor: pointer;
       transition: opacity 0.2s;
     }
-
     .back-btn:hover {
       opacity: 0.75;
     }
-
     .back-btn img {
       width: 22px;
       height: 22px;
-      filter: brightness(0) invert(1); /* 흰색 아이콘 유지용 (필요시 제거) */
+      filter: brightness(0) invert(1);
     }
-
     .page-title {
       flex: 1;
       text-align: center;
@@ -85,7 +86,6 @@
       font-weight: 700;
       margin: 0 12px;
     }
-
     button {
       width: 100%;
       padding: 16px;
@@ -99,30 +99,24 @@
       transition: all 0.25s ease;
       margin-top: 0.6rem;
     }
-
     button:hover {
       background: var(--accent-hover);
       transform: translateY(-2px);
       box-shadow: 0 8px 24px rgba(54,99,255,0.35);
     }
-
     .secondary {
       background: rgba(80,80,80,0.6);
       color: #ddd;
     }
-
     .secondary:hover {
       background: rgba(100,100,100,0.8);
     }
-
     .danger {
       background: var(--danger);
     }
-
     .danger:hover {
       background: var(--danger-hover);
     }
-
     ul {
       list-style: none;
       padding: 0;
@@ -131,7 +125,6 @@
       grid-template-columns: repeat(2, 1fr);
       gap: 12px 10px;
     }
-
     li {
       background: rgba(40,40,40,0.55);
       border: 1px solid rgba(70,70,70,0.4);
@@ -145,12 +138,10 @@
       cursor: pointer;
       transition: all 0.18s;
     }
-
     li:hover {
       background: rgba(60,60,60,0.75);
       transform: translateY(-1px);
     }
-
     .skeleton {
       background: linear-gradient(90deg, #2a2a2a 25%, #333 50%, #2a2a2a 75%);
       background-size: 200% 100%;
@@ -158,12 +149,10 @@
       border-radius: 12px;
       height: 72px;
     }
-
     @keyframes skeleton-loading {
       0% { background-position: 200% 0; }
       100% { background-position: -200% 0; }
     }
-
     .message-content-box {
       background: rgba(30,30,30,0.65);
       border: 1px solid rgba(70,70,70,0.5);
@@ -177,7 +166,6 @@
       min-height: 180px;
       margin: 1.4rem 0;
     }
-
     .modal-overlay {
       position: fixed;
       inset: 0;
@@ -191,12 +179,10 @@
       pointer-events: none;
       transition: opacity 0.25s ease;
     }
-
     .modal-overlay.show {
       opacity: 1;
       pointer-events: all;
     }
-
     .modal-content {
       background: rgba(30,30,30,0.95);
       border: 1px solid rgba(80,80,80,0.7);
@@ -210,30 +196,25 @@
       transition: all 0.25s ease;
       backdrop-filter: blur(10px);
     }
-
     .modal-overlay.show .modal-content {
       transform: scale(1);
       opacity: 1;
     }
-
     .modal-title {
       font-size: 1.3rem;
       font-weight: 700;
       margin-bottom: 1rem;
     }
-
     .modal-desc {
       color: var(--text-sub);
       font-size: 0.97rem;
       line-height: 1.5;
       margin-bottom: 1.8rem;
     }
-
     .modal-buttons {
       display: flex;
       gap: 12px;
     }
-
     .modal-btn {
       flex: 1;
       padding: 14px;
@@ -242,25 +223,20 @@
       cursor: pointer;
       transition: all 0.2s;
     }
-
     .modal-btn.cancel {
       background: rgba(70,70,70,0.8);
       color: #eee;
     }
-
     .modal-btn.cancel:hover {
       background: rgba(90,90,90,0.95);
     }
-
     .modal-btn.delete {
       background: var(--danger);
       color: white;
     }
-
     .modal-btn.delete:hover {
       background: var(--danger-hover);
     }
-
     footer {
       background: rgba(15,15,15,0.7);
       border-top: 1px solid rgba(50,50,50,0.5);
@@ -271,21 +247,24 @@
       margin-top: 3rem;
       backdrop-filter: blur(10px);
     }
-
     .footer-link {
       color: #5a8aff;
       text-decoration: none;
       font-weight: 500;
     }
-
     .footer-link:hover {
       color: #7aa0ff;
       text-decoration: underline;
     }
-
     @media (max-width: 520px) {
       ul {
         grid-template-columns: 1fr;
+      }
+      .header img {
+        height: 40px;
+      }
+      .header .app-name {
+        font-size: 1.8rem;
       }
     }
   </style>
@@ -293,7 +272,11 @@
 <body>
 
 <main>
-  <h1>💬 익명 메시지함</h1>
+  <div class="header">
+    <img src="logo.png" alt="ChatChat Logo">
+    <span class="app-name">ChatChat</span>
+  </div>
+
   <div class="container" id="mainContainer"></div>
 </main>
 
@@ -353,7 +336,6 @@ function renderListScreen(username) {
       </div>
       <div class="page-title">📬 ${username}의 메시지함</div>
     </div>
-
     <div style="margin:1.8rem 0 1.2rem;">
       <h4 style="margin-bottom:0.8rem;">받은 메시지</h4>
     </div>
@@ -361,18 +343,15 @@ function renderListScreen(username) {
       ${Array(10).fill().map(() => `<li class="skeleton"></li>`).join("")}
     </ul>
   `;
-
   document.getElementById("backToIndex").onclick = () => {
     location.href = "index.html";
   };
-
   loadMessages();
 }
 
 function renderDetailScreen(message) {
   const content = escapeHtml(message.content || "");
   const messageId = message.id;
-
   document.getElementById("mainContainer").innerHTML = `
     <div class="header-row">
       <div class="back-btn" id="backToList">
@@ -380,21 +359,17 @@ function renderDetailScreen(message) {
       </div>
       <div class="page-title">메시지 보기</div>
     </div>
-
     <div class="message-content-box">
       ${content || "<span style='color:#888;'>(내용 없음)</span>"}
     </div>
-
     <button class="secondary" id="backToListBtn" style="margin:2.2rem 0 1.2rem;">
       목록으로 돌아가기
     </button>
     <button class="danger" id="deleteMessageBtn">메시지 삭제</button>
   `;
-
   const backHandler = () => renderListScreen(localStorage.getItem("currentUsername"));
   document.getElementById("backToList").onclick = backHandler;
   document.getElementById("backToListBtn").onclick = backHandler;
-
   document.getElementById("deleteMessageBtn").onclick = () => {
     showDeleteModal(messageId);
   };
@@ -403,11 +378,8 @@ function renderDetailScreen(message) {
 function showDeleteModal(messageId) {
   const modal = document.getElementById("deleteModal");
   modal.classList.add("show");
-
   const confirmBtn = document.getElementById("confirmDelete");
   const cancelBtn = document.getElementById("cancelDelete");
-
-  // 이전 이벤트 제거 후 새로 등록 (중복 방지)
   const newConfirm = async () => {
     try {
       await api(`/messages/${messageId}`, "DELETE");
@@ -419,12 +391,9 @@ function showDeleteModal(messageId) {
       closeModal();
     }
   };
-
   const newCancel = () => closeModal();
-
-  confirmBtn.replaceWith(confirmBtn.cloneNode(true)); // 이벤트 초기화
+  confirmBtn.replaceWith(confirmBtn.cloneNode(true));
   cancelBtn.replaceWith(cancelBtn.cloneNode(true));
-
   document.getElementById("confirmDelete").onclick = newConfirm;
   document.getElementById("cancelDelete").onclick = newCancel;
 }
@@ -438,18 +407,14 @@ let allMessages = [];
 async function loadMessages() {
   const list = document.getElementById("messagesList");
   if (!list) return;
-
   try {
     const username = localStorage.getItem("currentUsername");
     const { messages = [] } = await api(`/messages?username=${username}`);
-
     allMessages = messages;
-
     if (allMessages.length === 0) {
       list.innerHTML = `<li style="text-align:center; color:#888; grid-column: span 2;">아직 받은 메시지가 없습니다</li>`;
       return;
     }
-
     list.innerHTML = allMessages
       .map((m, i) => {
         const txt = escapeHtml(m.content || "");
@@ -457,7 +422,6 @@ async function loadMessages() {
         return `<li data-index="${i}">${short}</li>`;
       })
       .join("");
-
     list.querySelectorAll("li").forEach(el => {
       el.onclick = () => {
         const idx = +el.dataset.index;
