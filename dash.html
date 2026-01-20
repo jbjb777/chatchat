@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>대시보드 : ChatChat</title>
   <link rel="icon" type="image/svg+xml" href="./logo.png">
- 
   <style>
     :root {
       --bg: #121212;
@@ -19,13 +18,13 @@
       --danger-hover: #ff6b6b;
       --radius: 16px;
     }
-    
+   
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
     }
-    
+   
     body {
       font-family: system-ui, -apple-system, sans-serif;
       background: url('back.png') no-repeat center center fixed;
@@ -36,11 +35,11 @@
       display: flex;
       flex-direction: column;
     }
-    
+   
     main {
       flex: 1;
     }
-    
+   
     h1 {
       text-align: center;
       font-size: 2.1rem;
@@ -48,45 +47,34 @@
       margin-bottom: 1.8rem;
       letter-spacing: -0.6px;
     }
-    
-    .box {
-      max-width: 520px;
-      margin: 0 auto;
-      background: rgba(30, 30, 30, 0.72);
-      border: 1px solid rgba(51, 51, 51, 0.6);
-      border-radius: var(--radius);
-      padding: 24px 28px;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.45);
-      backdrop-filter: blur(12px) saturate(160%);
-      -webkit-backdrop-filter: blur(12px) saturate(160%);
-    }
-    
+   
     .header-row {
       display: flex;
       align-items: center;
       margin-bottom: 1.6rem;
     }
+
     .back-btn {
-      background: rgba(50,50,50,0.6);
-      border: 1px solid rgba(80,80,80,0.7);
-      border-radius: 50%;
-      width: 44px;
-      height: 44px;
       display: flex;
       align-items: center;
-      justify-content: center;
+      gap: 8px;
+      color: var(--accent);
+      text-decoration: none;
+      font-size: 1.1rem;
+      font-weight: 500;
       cursor: pointer;
-      transition: all 0.2s;
-      flex-shrink: 0;
+      transition: color 0.2s;
     }
+
     .back-btn:hover {
-      background: rgba(70,70,70,0.8);
-      transform: scale(1.06);
+      color: var(--accent-hover);
     }
+
     .back-btn img {
-      width: 24px;
-      height: 24px;
+      width: 22px;
+      height: 22px;
     }
+
     .page-title {
       flex: 1;
       text-align: center;
@@ -94,7 +82,7 @@
       font-weight: 700;
       margin: 0 12px;
     }
-    
+   
     textarea {
       width: 100%;
       min-height: 140px;
@@ -110,13 +98,13 @@
       outline: none;
       backdrop-filter: blur(4px);
     }
-    
+   
     textarea:focus {
       border-color: var(--accent);
       box-shadow: 0 0 0 3px rgba(54,99,255,0.2);
       background: rgba(26, 26, 26, 0.85);
     }
-    
+   
     button {
       width: 100%;
       padding: 16px;
@@ -130,19 +118,19 @@
       transition: all 0.25s ease;
       margin-top: 0.6rem;
     }
-    
+   
     button:hover {
       background: var(--accent-hover);
       transform: translateY(-2px);
       box-shadow: 0 8px 24px rgba(54,99,255,0.35);
     }
-    
+   
     .secondary {
       background: rgba(44, 44, 44, 0.7);
       color: #ccc;
       backdrop-filter: blur(6px);
     }
-    
+   
     .secondary:hover {
       background: rgba(56, 56, 56, 0.8);
     }
@@ -153,47 +141,35 @@
     .danger:hover {
       background: var(--danger-hover);
     }
-    
+   
     .status {
       margin-top: 1rem;
       font-size: 0.95rem;
       text-align: center;
     }
-    
+   
     .success { color: #4caf50; }
     .error { color: #ff5252; }
-    
-    .link-box {
-      background: rgba(26, 26, 26, 0.75);
-      border: 1px solid rgba(68, 68, 68, 0.7);
-      padding: 14px;
-      border-radius: 12px;
-      word-break: break-all;
-      font-size: 0.95rem;
-      margin: 10px 0 16px;
-      color: #a0d2ff;
-      backdrop-filter: blur(4px);
-    }
-    
+   
     ul {
       list-style: none;
       padding: 0;
       margin-top: 1.2rem;
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 10px;
+      gap: 12px 10px;
     }
-    
+   
     li {
-      background: rgba(37, 37, 37, 0.75);
-      border: 1px solid rgba(51, 51, 51, 0.6);
+      background: rgba(37, 37, 37, 0.6);
+      border: 1px solid rgba(51, 51, 51, 0.5);
       border-radius: 12px;
-      padding: 14px 16px;
+      padding: 16px 18px;
       font-size: 0.98rem;
-      line-height: 1.45;
+      line-height: 1.5;
       white-space: pre-wrap;
       word-break: break-word;
-      backdrop-filter: blur(4px);
+      backdrop-filter: blur(6px);
       cursor: pointer;
       transition: all 0.18s;
     }
@@ -201,34 +177,34 @@
       background: rgba(50,50,50,0.85);
       transform: translateY(-1px);
     }
-    
+   
     /* 스켈레톤 UI */
     .skeleton {
       background: linear-gradient(90deg, #2a2a2a 25%, #333 50%, #2a2a2a 75%);
       background-size: 200% 100%;
       animation: skeleton-loading 1.5s infinite;
       border-radius: 12px;
-      height: 68px;
+      height: 72px;
       margin-bottom: 10px;
     }
     @keyframes skeleton-loading {
       0% { background-position: 200% 0; }
       100% { background-position: -200% 0; }
     }
-    
+   
     .center-hint {
       text-align: center;
       color: var(--text-sub);
       margin: 2rem 0 1rem;
       font-size: 0.95rem;
     }
-    
+   
     a {
       color: var(--accent);
       text-decoration: none;
       font-weight: 600;
     }
-    
+   
     a:hover {
       color: var(--accent-hover);
       text-decoration: underline;
@@ -241,20 +217,17 @@
       margin-bottom: 1.4rem;
     }
 
-    /* 메시지 상세 컨텐츠 - 박스 밖으로 꺼냄 */
+    /* 메시지 상세 - 박스 느낌 최소화 */
     .full-message-container {
       white-space: pre-wrap;
       word-break: break-word;
       font-size: 1.05rem;
-      line-height: 1.6;
-      background: rgba(26,26,26,0.58);
-      padding: 24px 28px;
-      border-radius: var(--radius);
-      border: 1px solid rgba(60,60,60,0.5);
-      min-height: 200px;
-      margin: 0 auto;
+      line-height: 1.65;
+      padding: 0;
+      min-height: 180px;
+      margin: 1rem auto;
       max-width: 560px;
-      backdrop-filter: blur(8px);
+      color: #e8e8e8;
     }
 
     /* 커스텀 모달 */
@@ -275,7 +248,6 @@
       opacity: 1;
       pointer-events: all;
     }
-
     .modal-content {
       background: rgba(30,30,30,0.92);
       border: 1px solid rgba(60,60,60,0.8);
@@ -293,7 +265,6 @@
       transform: scale(1);
       opacity: 1;
     }
-
     .modal-title {
       font-size: 1.28rem;
       font-weight: 700;
@@ -305,7 +276,6 @@
       line-height: 1.5;
       margin-bottom: 1.8rem;
     }
-
     .modal-buttons {
       display: flex;
       gap: 12px;
@@ -332,7 +302,7 @@
     .modal-btn.delete:hover {
       background: var(--danger-hover);
     }
-
+   
     footer {
       background: rgba(15, 15, 15, 0.75);
       border-top: 1px solid rgba(34, 34, 34, 0.6);
@@ -343,28 +313,25 @@
       margin-top: 3rem;
       backdrop-filter: blur(10px);
     }
-    
+   
     .footer-text {
       max-width: 640px;
       margin: 0 auto;
       line-height: 1.6;
     }
-    
+   
     .footer-link {
       color: #5a8aff;
       text-decoration: none;
       font-weight: 500;
     }
-    
+   
     .footer-link:hover {
       color: #7aa0ff;
       text-decoration: underline;
     }
-    
+   
     @media (max-width: 520px) {
-      .box {
-        padding: 20px 18px;
-      }
       ul {
         grid-template-columns: 1fr;
       }
@@ -374,7 +341,7 @@
 <body>
  <main>
   <h1>💬 익명 메시지함</h1>
-  <div class="box" id="mainContainer"></div>
+  <div id="mainContainer"></div>
 </main>
 
 <!-- 커스텀 삭제 확인 모달 -->
@@ -413,17 +380,14 @@ async function api(endpoint, method = "GET", body = null) {
   const headers = { "Content-Type": "application/json" };
   const token = getToken();
   if (token) headers.Authorization = `Bearer ${token}`;
- 
   const res = await fetch(API_BASE + endpoint, {
     method,
     headers,
     body: body ? JSON.stringify(body) : null
   });
- 
   const text = await res.text();
   let data;
   try { data = JSON.parse(text); } catch { data = { error: text }; }
- 
   if (!res.ok) throw new Error(data.error || "요청 실패");
   return data;
 }
@@ -436,51 +400,37 @@ function escapeHtml(str) {
 
 /* ───────── 화면 전환 ───────── */
 function renderListScreen(username) {
-  const myLink = `${location.origin}/?u=${username}`;
   document.getElementById("mainContainer").innerHTML = `
     <div class="header-row">
       <div class="back-btn" id="backToIndex">
-        <img src="re.png" alt="뒤로">
+        <img src="re.png" alt="뒤로"> 뒤로
       </div>
       <div class="page-title">📬 ${username}의 메시지함</div>
     </div>
-   
-    <div style="margin:1.6rem 0 2.2rem;">
-      <div style="font-weight:600; margin-bottom:0.6rem; text-align:center;">내 링크 (공유하기)</div>
-      <div class="link-box" id="myLink">${myLink}</div>
-      <button class="secondary" id="copyBtn">링크 복사</button>
-    </div>
-   
+  
     <div class="messages-header">
       <h4>받은 메시지</h4>
     </div>
     <ul id="messagesList">
       ${Array(10).fill().map(() => `<li class="skeleton"></li>`).join("")}
     </ul>
-   
-    <button class="secondary" id="logoutBtn">로그아웃</button>
   `;
-  // 이벤트 연결
-  document.getElementById("copyBtn").onclick = () => {
-    navigator.clipboard.writeText(myLink).then(() => {
-      alert("링크가 복사되었습니다!");
-    });
-  };
-  document.getElementById("logoutBtn").onclick = logout;
+
   document.getElementById("backToIndex").onclick = () => {
     location.href = "index.html";
   };
+
   loadMessages();
 }
 
 function renderDetailScreen(message) {
   const content = escapeHtml(message.content || "");
-  const messageId = message.id; // API에서 id 필드가 있다고 가정 (없으면 아래 주석 참고)
+  const messageId = message.id;
 
   document.getElementById("mainContainer").innerHTML = `
     <div class="header-row">
       <div class="back-btn" id="backToList">
-        <img src="re.png" alt="뒤로">
+        <img src="re.png" alt="뒤로"> 뒤로
       </div>
       <div class="page-title">메시지 보기</div>
     </div>
@@ -489,7 +439,7 @@ function renderDetailScreen(message) {
       ${content || "<span style='color:#777;'>(내용 없음)</span>"}
     </div>
 
-    <button class="secondary" id="backToListBtn" style="margin:1.8rem 0 1rem;">
+    <button class="secondary" id="backToListBtn" style="margin:2rem 0 1.2rem;">
       목록으로 돌아가기
     </button>
     <button class="danger" id="deleteMessageBtn">메시지 삭제</button>
@@ -499,7 +449,6 @@ function renderDetailScreen(message) {
   document.getElementById("backToList").onclick = backHandler;
   document.getElementById("backToListBtn").onclick = backHandler;
 
-  // 삭제 버튼 이벤트
   document.getElementById("deleteMessageBtn").onclick = () => {
     showDeleteModal(messageId);
   };
@@ -512,13 +461,11 @@ function showDeleteModal(messageId) {
   const confirmBtn = document.getElementById("confirmDelete");
   const cancelBtn = document.getElementById("cancelDelete");
 
-  // 이벤트는 한 번만 붙이도록 (중복 방지)
   const confirmHandler = async () => {
     try {
       await api(`/messages/${messageId}`, "DELETE");
       alert("메시지가 삭제되었습니다.");
       closeModal();
-      // 목록 화면으로 돌아가면서 새로고침
       renderListScreen(localStorage.getItem("currentUsername"));
     } catch (err) {
       alert("삭제 실패: " + err.message);
@@ -531,7 +478,6 @@ function showDeleteModal(messageId) {
   confirmBtn.onclick = confirmHandler;
   cancelBtn.onclick = cancelHandler;
 
-  // 한 번만 실행되도록 클린업
   const cleanup = () => {
     confirmBtn.onclick = null;
     cancelBtn.onclick = null;
@@ -540,8 +486,7 @@ function showDeleteModal(messageId) {
 }
 
 function closeModal() {
-  const modal = document.getElementById("deleteModal");
-  modal.classList.remove("show");
+  document.getElementById("deleteModal").classList.remove("show");
 }
 
 let allMessages = [];
@@ -553,8 +498,9 @@ async function loadMessages() {
   try {
     const username = localStorage.getItem("currentUsername");
     const { messages = [] } = await api(`/messages?username=${username}`);
-   
+
     allMessages = messages;
+
     if (allMessages.length === 0) {
       list.innerHTML = `<li style="text-align:center;color:#777; grid-column: span 2;">아직 받은 메시지가 없습니다</li>`;
     } else {
@@ -576,10 +522,7 @@ async function loadMessages() {
       });
     }
   } catch (e) {
-    if (list) {
-      list.innerHTML =
-        `<li style="text-align:center;color:#ff5252; grid-column: span 2;">메시지 불러오기 실패</li>`;
-    }
+    list.innerHTML = `<li style="text-align:center;color:#ff5252; grid-column: span 2;">메시지 불러오기 실패</li>`;
   }
 }
 
@@ -592,7 +535,6 @@ function logout() {
 /* ───────── 초기 로드 ───────── */
 (async () => {
   const storedUsername = localStorage.getItem("currentUsername");
- 
   if (storedUsername && getToken()) {
     renderListScreen(storedUsername);
     setInterval(() => {
