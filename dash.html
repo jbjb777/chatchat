@@ -51,16 +51,48 @@
       background: rgba(30, 30, 30, 0.72);
       border: 1px solid rgba(51, 51, 51, 0.6);
       border-radius: var(--radius);
-      padding: 32px 28px;
+      padding: 24px 28px;
       box-shadow: 0 8px 32px rgba(0,0,0,0.45);
       backdrop-filter: blur(12px) saturate(160%);
       -webkit-backdrop-filter: blur(12px) saturate(160%);
     }
-     
-    h3, h4 {
+
+    .header-row {
+      display: flex;
+      align-items: center;
+      margin-bottom: 1.6rem;
+    }
+
+    .back-btn {
+      background: rgba(50,50,50,0.6);
+      border: 1px solid rgba(80,80,80,0.7);
+      border-radius: 50%;
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      flex-shrink: 0;
+    }
+
+    .back-btn:hover {
+      background: rgba(70,70,70,0.8);
+      transform: scale(1.06);
+    }
+
+    .back-btn img {
+      width: 24px;
+      height: 24px;
+    }
+
+    .page-title {
+      flex: 1;
       text-align: center;
-      margin-bottom: 1.4rem;
-      font-weight: 600;
+      font-size: 1.45rem;
+      font-weight: 700;
+      margin: 0 12px;
     }
      
     textarea {
@@ -150,13 +182,18 @@
       border: 1px solid rgba(51, 51, 51, 0.6);
       border-radius: 12px;
       padding: 14px 16px;
-      margin-bottom: 10px;
       font-size: 0.98rem;
       line-height: 1.45;
       white-space: pre-wrap;
       word-break: break-word;
       backdrop-filter: blur(4px);
       cursor: pointer;
+      transition: all 0.18s;
+    }
+
+    li:hover {
+      background: rgba(50,50,50,0.85);
+      transform: translateY(-1px);
     }
      
     /* 스켈레톤 UI */
@@ -199,57 +236,18 @@
       margin-bottom: 1.4rem;
     }
 
-    .messages-header h4 {
-      margin: 0;
-      text-align: left;
-    }
-
-    /* 모달 스타일 */
-    .modal {
-      display: none;
-      position: fixed;
-      z-index: 1;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      overflow: auto;
-      background-color: rgba(0,0,0,0.4);
-      padding-top: 60px;
-    }
-
-    .modal-content {
-      background-color: var(--card-bg);
-      margin: 5% auto;
-      padding: 20px;
-      border: 1px solid var(--border);
-      width: 80%;
-      max-width: 600px;
-      border-radius: 12px;
-      color: var(--text);
-    }
-
-    .close {
-      color: var(--text-sub);
-      float: right;
-      font-size: 28px;
-      font-weight: bold;
-    }
-
-    .close:hover,
-    .close:focus {
-      color: var(--text);
-      text-decoration: none;
-      cursor: pointer;
-    }
-
-    .full-message {
+    .full-message-container {
       white-space: pre-wrap;
       word-break: break-word;
-      font-size: 1rem;
-      line-height: 1.5;
+      font-size: 1.05rem;
+      line-height: 1.6;
+      background: rgba(26,26,26,0.6);
+      padding: 20px;
+      border-radius: 12px;
+      border: 1px solid rgba(60,60,60,0.7);
+      min-height: 180px;
     }
-     
+
     footer {
       background: rgba(15, 15, 15, 0.75);
       border-top: 1px solid rgba(34, 34, 34, 0.6);
@@ -280,7 +278,7 @@
      
     @media (max-width: 520px) {
       .box {
-        padding: 24px 20px;
+        padding: 20px 18px;
       }
       ul {
         grid-template-columns: 1fr;
@@ -293,13 +291,6 @@
  <main>
   <h1>💬 익명 메시지함</h1>
   <div class="box" id="mainContainer"></div>
-  <div id="messageModal" class="modal">
-    <div class="modal-content">
-      <span class="close" id="closeModal">&times;</span>
-      <h4>전체 메시지</h4>
-      <p id="fullMessageContent" class="full-message"></p>
-    </div>
-  </div>
 </main>
 
  <footer>
@@ -341,18 +332,25 @@ async function api(endpoint, method = "GET", body = null) {
   return data;
 }
 
-/* ───────── UI ───────── */
+function escapeHtml(str) {
+  return str.replace(/[&<>"']/g, m =>
+    ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" }[m])
+  );
+}
 
-function showDashboard(username) {
-  const el = document.getElementById("mainContainer");
-  if (!el) return;
-  
-  const myLink = `${location.origin}/?u=${username}`; // 공유 링크는 메인 페이지로
-  
-  el.innerHTML = `
-    <h3>📬 ${username}의 메시지함</h3>
+/* ───────── 화면 전환 ───────── */
+function renderListScreen(username) {
+  const myLink = `${location.origin}/?u=${username}`;
+
+  document.getElementById("mainContainer").innerHTML = `
+    <div class="header-row">
+      <div class="back-btn" id="backToIndex">
+        <img src="re.png" alt="뒤로">
+      </div>
+      <div class="page-title">📬 ${username}의 메시지함</div>
+    </div>
     
-    <div style="margin:1.8rem 0 2.2rem;">
+    <div style="margin:1.6rem 0 2.2rem;">
       <div style="font-weight:600; margin-bottom:0.6rem; text-align:center;">내 링크 (공유하기)</div>
       <div class="link-box" id="myLink">${myLink}</div>
       <button class="secondary" id="copyBtn">링크 복사</button>
@@ -367,43 +365,60 @@ function showDashboard(username) {
     
     <button class="secondary" id="logoutBtn">로그아웃</button>
   `;
-  
+
+  // 이벤트 연결
   document.getElementById("copyBtn").onclick = () => {
     navigator.clipboard.writeText(myLink).then(() => {
       alert("링크가 복사되었습니다!");
     });
   };
-  
+
   document.getElementById("logoutBtn").onclick = logout;
-  
-  // 모달 설정
-  const modal = document.getElementById("messageModal");
-  const closeBtn = document.getElementById("closeModal");
-  closeBtn.onclick = () => { modal.style.display = "none"; };
-  window.onclick = (event) => {
-    if (event.target === modal) {
-      modal.style.display = "none";
-    }
+
+  document.getElementById("backToIndex").onclick = () => {
+    location.href = "index.html";
   };
-  
-  // 최초 로드 + 주기적 갱신
-  loadMessages(username);
-  setInterval(() => loadMessages(username), 3000);
+
+  loadMessages();
 }
 
-let allMessages = []; // 전체 메시지 저장
+function renderDetailScreen(message) {
+  const content = escapeHtml(message.content || "");
 
-async function loadMessages(username) {
+  document.getElementById("mainContainer").innerHTML = `
+    <div class="header-row">
+      <div class="back-btn" id="backToList">
+        <img src="re.png" alt="뒤로">
+      </div>
+      <div class="page-title">메시지 보기</div>
+    </div>
+
+    <div class="full-message-container">
+      ${content || "<span style='color:#777;'>(내용 없음)</span>"}
+    </div>
+
+    <button class="secondary" id="backToListBtn" style="margin-top:1.8rem;">
+      목록으로 돌아가기
+    </button>
+  `;
+
+  const backHandler = () => renderListScreen(localStorage.getItem("currentUsername"));
+
+  document.getElementById("backToList").onclick = backHandler;
+  document.getElementById("backToListBtn").onclick = backHandler;
+}
+
+let allMessages = [];
+
+async function loadMessages() {
   const list = document.getElementById("messagesList");
   if (!list) return;
 
   try {
+    const username = localStorage.getItem("currentUsername");
     const { messages = [] } = await api(`/messages?username=${username}`);
     
-    // 최신순 정렬 (서버가 최신순을 보장하지 않을 경우)
-    // messages.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
-    
-    allMessages = messages; // 전체 저장
+    allMessages = messages;
 
     if (allMessages.length === 0) {
       list.innerHTML = `<li style="text-align:center;color:#777; grid-column: span 2;">아직 받은 메시지가 없습니다</li>`;
@@ -411,25 +426,26 @@ async function loadMessages(username) {
       list.innerHTML = allMessages
         .map((m, index) => {
           const content = escapeHtml(m.content || "");
-          const displayContent = content.length > 20 ? content.substring(0, 20) + '...' : content;
-          return `<li data-index="${index}">${displayContent}</li>`;
+          const display = content.length > 20 ? content.substring(0, 20) + '...' : content;
+          return `<li data-index="${index}">${display}</li>`;
         })
         .join("");
-      
-      // 클릭 이벤트 추가
-      const items = list.querySelectorAll('li');
-      items.forEach(item => {
-        item.onclick = (e) => {
-          const index = e.target.dataset.index;
-          const fullContent = escapeHtml(allMessages[index].content || "");
-          document.getElementById("fullMessageContent").textContent = fullContent;
-          document.getElementById("messageModal").style.display = "block";
+
+      // 클릭 → 상세 화면
+      list.querySelectorAll("li").forEach(item => {
+        item.onclick = () => {
+          const idx = parseInt(item.dataset.index);
+          if (!isNaN(idx) && allMessages[idx]) {
+            renderDetailScreen(allMessages[idx]);
+          }
         };
       });
     }
   } catch (e) {
-    list.innerHTML = 
-      `<li style="text-align:center;color:#ff5252; grid-column: span 2;">메시지 불러오기 실패</li>`;
+    if (list) {
+      list.innerHTML = 
+        `<li style="text-align:center;color:#ff5252; grid-column: span 2;">메시지 불러오기 실패</li>`;
+    }
   }
 }
 
@@ -439,19 +455,18 @@ function logout() {
   location.href = "login.html";
 }
 
-function escapeHtml(str) {
-  return str.replace(/[&<>"']/g, m =>
-    ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" }[m])
-  );
-}
-
-/* ───────── Page Load ───────── */
-
+/* ───────── 초기 로드 ───────── */
 (async () => {
   const storedUsername = localStorage.getItem("currentUsername");
   
   if (storedUsername && getToken()) {
-    showDashboard(storedUsername);
+    renderListScreen(storedUsername);
+    setInterval(() => {
+      // 목록 화면에 있을 때만 갱신
+      if (document.getElementById("messagesList")) {
+        loadMessages();
+      }
+    }, 3000);
   } else {
     location.href = "login.html";
   }
