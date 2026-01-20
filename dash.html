@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>대시보드 : ChatChat</title>
+  <title>메시지함 : ChatChat</title>
   <link rel="icon" type="image/svg+xml" href="./logo.png">
   
   <style>
@@ -16,6 +16,8 @@
       --accent: #3663FF;
       --accent-hover: #4d7aff;
       --radius: 16px;
+      --danger: #ff5252;
+      --danger-hover: #ff6b6b;
     }
      
     * {
@@ -37,92 +39,48 @@
      
     main {
       flex: 1;
+      max-width: 680px;
+      margin: 0 auto;
+      width: 100%;
     }
      
     h1 {
       text-align: center;
-      font-size: 2.1rem;
+      font-size: 2.3rem;
       font-weight: 700;
-      margin-bottom: 1.8rem;
+      margin-bottom: 2rem;
       letter-spacing: -0.6px;
     }
      
-    .box {
-      max-width: 520px;
-      margin: 0 auto;
+    h3, h4 {
+      margin-bottom: 1.4rem;
+      font-weight: 600;
+    }
+     
+    .link-section {
       background: rgba(30, 30, 30, 0.72);
       border: 1px solid rgba(51, 51, 51, 0.6);
       border-radius: var(--radius);
-      padding: 24px 28px;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.45);
+      padding: 24px;
+      margin-bottom: 2.4rem;
       backdrop-filter: blur(12px) saturate(160%);
-      -webkit-backdrop-filter: blur(12px) saturate(160%);
-    }
-
-    .header-row {
-      display: flex;
-      align-items: center;
-      margin-bottom: 1.6rem;
-    }
-
-    .back-btn {
-      background: rgba(50,50,50,0.6);
-      border: 1px solid rgba(80,80,80,0.7);
-      border-radius: 50%;
-      width: 44px;
-      height: 44px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: all 0.2s;
-      flex-shrink: 0;
-    }
-
-    .back-btn:hover {
-      background: rgba(70,70,70,0.8);
-      transform: scale(1.06);
-    }
-
-    .back-btn img {
-      width: 24px;
-      height: 24px;
-    }
-
-    .page-title {
-      flex: 1;
       text-align: center;
-      font-size: 1.45rem;
-      font-weight: 700;
-      margin: 0 12px;
     }
-     
-    textarea {
-      width: 100%;
-      min-height: 140px;
-      padding: 14px 16px;
+
+    .link-box {
       background: rgba(26, 26, 26, 0.75);
       border: 1px solid rgba(68, 68, 68, 0.7);
-      border-radius: 12px;
-      color: var(--text);
-      font-family: inherit;
-      font-size: 1rem;
-      resize: vertical;
-      margin-bottom: 1.2rem;
-      outline: none;
-      backdrop-filter: blur(4px);
-    }
-     
-    textarea:focus {
-      border-color: var(--accent);
-      box-shadow: 0 0 0 3px rgba(54,99,255,0.2);
-      background: rgba(26, 26, 26, 0.85);
-    }
-     
-    button {
-      width: 100%;
       padding: 16px;
-      font-size: 1.05rem;
+      border-radius: 12px;
+      word-break: break-all;
+      font-size: 0.97rem;
+      margin: 12px 0 16px;
+      color: #a0d2ff;
+    }
+
+    button {
+      padding: 14px 24px;
+      font-size: 1.02rem;
       font-weight: 600;
       color: white;
       background: var(--accent);
@@ -130,13 +88,11 @@
       border-radius: 30px;
       cursor: pointer;
       transition: all 0.25s ease;
-      margin-top: 0.6rem;
     }
      
     button:hover {
       background: var(--accent-hover);
       transform: translateY(-2px);
-      box-shadow: 0 8px 24px rgba(54,99,255,0.35);
     }
      
     .secondary {
@@ -148,71 +104,155 @@
     .secondary:hover {
       background: rgba(56, 56, 56, 0.8);
     }
-     
-    .status {
-      margin-top: 1rem;
-      font-size: 0.95rem;
-      text-align: center;
+
+    .messages-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 2.2rem 0 1.4rem;
     }
-     
-    .success { color: #4caf50; }
-    .error   { color: #ff5252; }
-     
-    .link-box {
-      background: rgba(26, 26, 26, 0.75);
-      border: 1px solid rgba(68, 68, 68, 0.7);
-      padding: 14px;
-      border-radius: 12px;
-      word-break: break-all;
-      font-size: 0.95rem;
-      margin: 10px 0 16px;
-      color: #a0d2ff;
-      backdrop-filter: blur(4px);
+
+    .messages-header h4 {
+      margin: 0;
     }
-     
-    ul {
+
+    #messagesList {
       list-style: none;
-      padding: 0;
-      margin-top: 1.2rem;
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 10px;
     }
-     
-    li {
-      background: rgba(37, 37, 37, 0.75);
+
+    #messagesList li {
+      background: rgba(37, 37, 37, 0.8);
       border: 1px solid rgba(51, 51, 51, 0.6);
-      border-radius: 12px;
-      padding: 14px 16px;
-      font-size: 0.98rem;
-      line-height: 1.45;
+      border-radius: 14px;
+      padding: 16px 18px;
+      margin-bottom: 12px;
+      font-size: 1rem;
+      line-height: 1.5;
       white-space: pre-wrap;
       word-break: break-word;
       backdrop-filter: blur(4px);
-      cursor: pointer;
-      transition: all 0.18s;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
     }
 
-    li:hover {
-      background: rgba(50,50,50,0.85);
-      transform: translateY(-1px);
+    .msg-content {
+      flex: 1;
     }
-     
-    /* 스켈레톤 UI */
+
+    .delete-btn {
+      background: rgba(255, 82, 82, 0.18);
+      color: #ff7a7a;
+      border: 1px solid rgba(255,82,82,0.4);
+      font-size: 0.88rem;
+      padding: 6px 12px;
+      border-radius: 10px;
+      min-width: 64px;
+      transition: all 0.2s;
+    }
+
+    .delete-btn:hover {
+      background: rgba(255,82,82,0.35);
+      color: white;
+    }
+
+    /* 모달 스타일 */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.65);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .modal-overlay.show {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .modal-content {
+      background: #1e1e1e;
+      border: 1px solid #333;
+      border-radius: var(--radius);
+      padding: 28px 24px;
+      width: 90%;
+      max-width: 380px;
+      text-align: center;
+      transform: scale(0.92);
+      opacity: 0;
+      transition: all 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+    }
+
+    .modal-overlay.show .modal-content {
+      transform: scale(1);
+      opacity: 1;
+    }
+
+    .modal-title {
+      font-size: 1.28rem;
+      font-weight: 700;
+      margin-bottom: 0.8rem;
+    }
+
+    .modal-desc {
+      color: #ff8a8a;
+      font-size: 0.94rem;
+      margin-bottom: 2rem;
+      line-height: 1.4;
+    }
+
+    .modal-buttons {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+    }
+
+    .modal-btn {
+      padding: 12px 28px;
+      font-size: 1rem;
+      border-radius: 28px;
+      min-width: 110px;
+    }
+
+    .btn-cancel {
+      background: rgba(100,100,100,0.6);
+      color: #ddd;
+    }
+
+    .btn-cancel:hover {
+      background: rgba(140,140,140,0.6);
+    }
+
+    .btn-delete {
+      background: var(--danger);
+    }
+
+    .btn-delete:hover {
+      background: var(--danger-hover);
+    }
+
     .skeleton {
       background: linear-gradient(90deg, #2a2a2a 25%, #333 50%, #2a2a2a 75%);
       background-size: 200% 100%;
       animation: skeleton-loading 1.5s infinite;
-      border-radius: 12px;
-      height: 68px;
-      margin-bottom: 10px;
+      border-radius: 14px;
+      height: 72px;
+      margin-bottom: 12px;
     }
 
     @keyframes skeleton-loading {
       0% { background-position: 200% 0; }
       100% { background-position: -200% 0; }
     }
-     
+
     .center-hint {
       text-align: center;
       color: var(--text-sub);
@@ -231,25 +271,6 @@
       text-decoration: underline;
     }
 
-    .messages-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 1.4rem;
-    }
-
-    .full-message-container {
-      white-space: pre-wrap;
-      word-break: break-word;
-      font-size: 1.05rem;
-      line-height: 1.6;
-      background: rgba(26,26,26,0.6);
-      padding: 20px;
-      border-radius: 12px;
-      border: 1px solid rgba(60,60,60,0.7);
-      min-height: 180px;
-    }
-
     footer {
       background: rgba(15, 15, 15, 0.75);
       border-top: 1px solid rgba(34, 34, 34, 0.6);
@@ -257,7 +278,7 @@
       text-align: center;
       font-size: 0.92rem;
       color: #777;
-      margin-top: 3rem;
+      margin-top: 4rem;
       backdrop-filter: blur(10px);
     }
      
@@ -277,25 +298,16 @@
       color: #7aa0ff;
       text-decoration: underline;
     }
-     
-    @media (max-width: 520px) {
-      .box {
-        padding: 20px 18px;
-      }
-      ul {
-        grid-template-columns: 1fr;
-      }
-    }
   </style>
 </head>
 <body>
 
  <main>
   <h1>💬 익명 메시지함</h1>
-  <div class="box" id="mainContainer"></div>
+  <div id="mainContainer"></div>
 </main>
 
- <footer>
+<footer>
   <div class="footer-text">
     이 사이트는 <a href="https://sharer.jbjb.r-e.kr/user?id=jbeom&nickname=JB777"
                     target="_blank"
@@ -303,9 +315,23 @@
   </div>
 </footer>
 
+<!-- 삭제 확인 모달 -->
+<div id="deleteModal" class="modal-overlay">
+  <div class="modal-content">
+    <div class="modal-title">메시지를 삭제하시겠습니까?</div>
+    <div class="modal-desc">삭제된 메시지는 복구할 수 없습니다.</div>
+    
+    <div class="modal-buttons">
+      <button class="modal-btn btn-cancel" id="cancelDelete">취소</button>
+      <button class="modal-btn btn-delete" id="confirmDelete">삭제</button>
+    </div>
+  </div>
+</div>
+
  <script>
-// ── 스크립트 ──
 const API_BASE = "https://chatchat-api.alexeom97.workers.dev";
+
+let currentMessageIdToDelete = null;
 
 function getToken() {
   return localStorage.getItem("authToken");
@@ -334,120 +360,160 @@ async function api(endpoint, method = "GET", body = null) {
   return data;
 }
 
-function escapeHtml(str) {
-  return str.replace(/[&<>"']/g, m =>
-    ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" }[m])
-  );
+/* ───────── UI Functions ───────── */
+
+function showSendForm(targetUsername = "") {
+  const el = document.getElementById("mainContainer");
+  if (!el) return;
+  
+  const displayName = targetUsername || "누군가";
+
+  el.innerHTML = `
+    <h3>${displayName}에게 익명 메시지 보내기</h3>
+    <textarea id="msgContent" placeholder="메시지를 입력하세요..." maxlength="1000"></textarea>
+    <button id="sendBtn">보내기</button>
+    <p id="sendStatus" class="status"></p>
+    
+    <div style="text-align:center; margin-top:1.8rem; font-size:0.98rem;">
+      <button class="underline-link" onclick="location.href='index.html'">로그인하고 나만의 익명 메시지 받기</button>
+    </div>
+  `;
+  
+  document.getElementById("sendBtn").onclick = () => sendMessage(targetUsername);
 }
 
-/* ───────── 화면 전환 ───────── */
-function renderListScreen(username) {
-  const myLink = `${location.origin}/?u=${username}`;
+function showSuccessPage() {
+  const el = document.getElementById("mainContainer");
+  if (!el) return;
 
-  document.getElementById("mainContainer").innerHTML = `
-    <div class="header-row">
-      <div class="back-btn" id="backToIndex">
-        <img src="re.png" alt="뒤로">
-      </div>
-      <div class="page-title">📬 ${username}의 메시지함</div>
+  el.innerHTML = `
+    <div class="success-page" style="text-align:center; padding:32px 0;">
+      <img src="send.png" alt="전송 완료" style="width:120px; height:auto; margin:0 auto 24px; display:block;">
+      <div style="font-size:1.55rem; font-weight:700; margin-bottom:1.2rem;">메시지가 보내졌습니다!</div>
+      <div style="font-size:1.05rem; color:#4caf50; margin-bottom:2.2rem;">익명으로 잘 전달되었어요</div>
+      
+      <button class="action-btn" style="background:var(--accent); color:white; padding:16px 32px; border-radius:30px; font-size:1.05rem; font-weight:600;" onclick="location.href='index.html'">나만의 메시지 받기</button>
+      <button class="action-btn" style="background:transparent; color:var(--accent); border:2px solid var(--accent); margin-top:12px;" onclick="location.reload()">다른 메시지 보내기</button>
     </div>
+  `;
+}
+
+async function sendMessage(toUsername) {
+  const input = document.getElementById("msgContent");
+  const status = document.getElementById("sendStatus");
+  const content = input?.value?.trim();
+  
+  if (!content || !toUsername) {
+    status.textContent = "메시지를 입력해주세요";
+    status.className = "status error";
+    return;
+  }
+  
+  try {
+    await api("/send", "POST", { toUsername, content });
+    showSuccessPage();
+  } catch (e) {
+    status.textContent = "전송 실패 : " + e.message;
+    status.className = "status error";
+  }
+}
+
+function showDashboard(username) {
+  const el = document.getElementById("mainContainer");
+  if (!el) return;
+  
+  const myLink = `${location.origin}${location.pathname}?u=${username}`;
+  
+  el.innerHTML = `
+    <h3 style="text-align:center;">📬 ${username}의 메시지함</h3>
     
-    <div style="margin:1.6rem 0 2.2rem;">
-      <div style="font-weight:600; margin-bottom:0.6rem; text-align:center;">내 링크 (공유하기)</div>
+    <div class="link-section">
+      <div style="font-weight:600; margin-bottom:0.8rem;">내 링크 (공유하기)</div>
       <div class="link-box" id="myLink">${myLink}</div>
       <button class="secondary" id="copyBtn">링크 복사</button>
     </div>
     
     <div class="messages-header">
       <h4>받은 메시지</h4>
+      <button class="more-btn" id="moreBtn" style="padding:8px 20px; font-size:0.9rem; border-radius:20px; background:rgba(54,99,255,0.8);">더보기</button>
     </div>
     <ul id="messagesList">
-      ${Array(10).fill().map(() => `<li class="skeleton"></li>`).join("")}
+      ${Array(7).fill().map(() => `<li class="skeleton"></li>`).join("")}
     </ul>
     
-    <button class="secondary" id="logoutBtn">로그아웃</button>
+    <div style="text-align:center; margin-top:2.5rem;">
+      <button class="secondary" id="logoutBtn" style="padding:14px 32px;">로그아웃</button>
+    </div>
   `;
-
-  // 이벤트 연결
+  
   document.getElementById("copyBtn").onclick = () => {
     navigator.clipboard.writeText(myLink).then(() => {
       alert("링크가 복사되었습니다!");
     });
   };
-
+  
   document.getElementById("logoutBtn").onclick = logout;
-
-  document.getElementById("backToIndex").onclick = () => {
-    location.href = "index.html";
+  document.getElementById("moreBtn").onclick = () => {
+    location.href = "dash.html";
   };
-
-  loadMessages();
+  
+  loadMessages(username);
+  setInterval(() => loadMessages(username), 3000);
 }
 
-function renderDetailScreen(message) {
-  const content = escapeHtml(message.content || "");
-
-  document.getElementById("mainContainer").innerHTML = `
-    <div class="header-row">
-      <div class="back-btn" id="backToList">
-        <img src="re.png" alt="뒤로">
-      </div>
-      <div class="page-title">메시지 보기</div>
-    </div>
-
-    <div class="full-message-container">
-      ${content || "<span style='color:#777;'>(내용 없음)</span>"}
-    </div>
-
-    <button class="secondary" id="backToListBtn" style="margin-top:1.8rem;">
-      목록으로 돌아가기
-    </button>
-  `;
-
-  const backHandler = () => renderListScreen(localStorage.getItem("currentUsername"));
-
-  document.getElementById("backToList").onclick = backHandler;
-  document.getElementById("backToListBtn").onclick = backHandler;
-}
-
-let allMessages = [];
-
-async function loadMessages() {
+async function loadMessages(username) {
   const list = document.getElementById("messagesList");
   if (!list) return;
 
   try {
-    const username = localStorage.getItem("currentUsername");
     const { messages = [] } = await api(`/messages?username=${username}`);
     
-    allMessages = messages;
+    const recentMessages = messages.slice(0, 7);
 
-    if (allMessages.length === 0) {
-      list.innerHTML = `<li style="text-align:center;color:#777; grid-column: span 2;">아직 받은 메시지가 없습니다</li>`;
-    } else {
-      list.innerHTML = allMessages
-        .map((m, index) => {
-          const content = escapeHtml(m.content || "");
-          const display = content.length > 20 ? content.substring(0, 20) + '...' : content;
-          return `<li data-index="${index}">${display}</li>`;
-        })
-        .join("");
-
-      // 클릭 → 상세 화면
-      list.querySelectorAll("li").forEach(item => {
-        item.onclick = () => {
-          const idx = parseInt(item.dataset.index);
-          if (!isNaN(idx) && allMessages[idx]) {
-            renderDetailScreen(allMessages[idx]);
-          }
-        };
-      });
+    if (recentMessages.length === 0) {
+      list.innerHTML = `<li style="text-align:center; color:#777; padding:24px 0;">아직 받은 메시지가 없습니다</li>`;
+      return;
     }
+
+    list.innerHTML = recentMessages
+      .map(m => {
+        const content = escapeHtml(m.content || "");
+        const displayContent = content.length > 80 ? content.substring(0, 80) + '...' : content;
+        return `
+          <li data-id="${m.id || ''}">
+            <div class="msg-content">${displayContent}</div>
+            <button class="delete-btn" onclick="showDeleteConfirm('${m.id || ''}')">삭제</button>
+          </li>
+        `;
+      })
+      .join("");
   } catch (e) {
-    if (list) {
-      list.innerHTML = 
-        `<li style="text-align:center;color:#ff5252; grid-column: span 2;">메시지 불러오기 실패</li>`;
-    }
+    list.innerHTML = 
+      `<li style="text-align:center; color:#ff5252; padding:24px 0;">메시지 불러오기 실패</li>`;
+  }
+}
+
+function showDeleteConfirm(messageId) {
+  currentMessageIdToDelete = messageId;
+  document.getElementById("deleteModal").classList.add("show");
+}
+
+function hideDeleteModal() {
+  document.getElementById("deleteModal").classList.remove("show");
+  currentMessageIdToDelete = null;
+}
+
+async function confirmDelete() {
+  if (!currentMessageIdToDelete) return;
+
+  try {
+    await api(`/messages/${currentMessageIdToDelete}`, "DELETE");
+    hideDeleteModal();
+    // 즉시 새로고침 (또는 목록만 갱신하고 싶으면 loadMessages() 호출 가능)
+    location.reload();
+  } catch (e) {
+    alert("삭제 실패: " + e.message);
+    hideDeleteModal();
   }
 }
 
@@ -457,18 +523,36 @@ function logout() {
   location.href = "login.html";
 }
 
-/* ───────── 초기 로드 ───────── */
+function escapeHtml(str) {
+  return str.replace(/[&<>"']/g, m =>
+    ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" }[m])
+  );
+}
+
+/* 모달 이벤트 바인딩 */
+document.getElementById("cancelDelete").onclick = hideDeleteModal;
+document.getElementById("confirmDelete").onclick = confirmDelete;
+
+// 모달 바깥 클릭 시 닫기
+document.getElementById("deleteModal").onclick = (e) => {
+  if (e.target === e.currentTarget) hideDeleteModal();
+};
+
+/* ───────── Page Load ───────── */
+
 (async () => {
+  const params = new URLSearchParams(location.search);
+  const targetUsername = params.get("u");
+  
+  if (targetUsername) {
+    showSendForm(targetUsername);
+    return;
+  }
+  
   const storedUsername = localStorage.getItem("currentUsername");
   
   if (storedUsername && getToken()) {
-    renderListScreen(storedUsername);
-    setInterval(() => {
-      // 목록 화면에 있을 때만 갱신
-      if (document.getElementById("messagesList")) {
-        loadMessages();
-      }
-    }, 3000);
+    showDashboard(storedUsername);
   } else {
     location.href = "login.html";
   }
