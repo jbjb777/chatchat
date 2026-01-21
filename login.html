@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>로그인 : ChatChat</title>
   <link rel="icon" type="image/svg+xml" href="./logo.png">
-  
+ 
   <style>
     :root {
       --bg: #121212;
@@ -19,16 +19,15 @@
       --input-bg: #1a1a1a;
       --input-border: #444;
     }
-
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
     }
-
     body {
       font-family: system-ui, -apple-system, sans-serif;
-      background: var(--bg);
+      background: url('back.png') no-repeat center center fixed;
+      background-size: cover;
       color: var(--text);
       min-height: 100vh;
       display: flex;
@@ -37,10 +36,9 @@
       justify-content: center;
       padding: 20px;
     }
-
     .box {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
+      background: rgba(30,30,30,0.75);
+      border: 1px solid rgba(70,70,70,0.5);
       border-radius: var(--radius);
       padding: 36px 28px;
       max-width: 420px;
@@ -48,7 +46,6 @@
       box-shadow: 0 8px 32px rgba(0,0,0,0.45);
       backdrop-filter: blur(10px);
     }
-
     h2 {
       text-align: center;
       color: var(--accent);
@@ -56,18 +53,15 @@
       font-weight: 700;
       margin-bottom: 8px;
     }
-
     .subtitle {
       text-align: center;
       color: var(--text-sub);
       margin-bottom: 28px;
       font-size: 0.95rem;
     }
-
     .group {
       margin-bottom: 20px;
     }
-
     label {
       display: block;
       font-weight: 500;
@@ -75,7 +69,6 @@
       margin-bottom: 8px;
       color: var(--text-sub);
     }
-
     input {
       width: 100%;
       padding: 14px 16px;
@@ -88,16 +81,13 @@
       outline: none;
       transition: all 0.2s;
     }
-
     input:focus {
       border-color: var(--accent);
       box-shadow: 0 0 0 3px rgba(54,99,255,0.18);
     }
-
     input::placeholder {
       color: #666;
     }
-
     button {
       width: 100%;
       padding: 16px;
@@ -111,22 +101,18 @@
       transition: all 0.25s ease;
       margin-top: 12px;
     }
-
     button:hover {
       background: var(--accent-hover);
       transform: translateY(-2px);
       box-shadow: 0 8px 24px rgba(54,99,255,0.35);
     }
-
     button.secondary {
-      background: #2c2c2c;
-      color: #ccc;
+      background: rgba(80,80,80,0.6);
+      color: #ddd;
     }
-
     button.secondary:hover {
-      background: #383838;
+      background: rgba(100,100,100,0.8);
     }
-
     button:disabled {
       background: #444;
       color: #888;
@@ -134,7 +120,6 @@
       transform: none;
       box-shadow: none;
     }
-
     .error {
       color: #ff5252;
       font-size: 0.9rem;
@@ -142,7 +127,6 @@
       margin-top: 16px;
       min-height: 1.2em;
     }
-
     .success {
       color: #4caf50;
       font-size: 0.9rem;
@@ -150,7 +134,6 @@
       margin-top: 16px;
       min-height: 1.2em;
     }
-
     footer {
       margin-top: auto;
       padding: 28px 20px;
@@ -158,27 +141,24 @@
       text-align: center;
       font-size: 0.92rem;
       color: #777;
-      border-top: 1px solid #222;
-      background: #0f0f0f;
+      border-top: 1px solid rgba(50,50,50,0.5);
+      background: rgba(15,15,15,0.7);
+      backdrop-filter: blur(10px);
     }
-
     .footer-text {
       max-width: 640px;
       margin: 0 auto;
       line-height: 1.6;
     }
-
     .footer-link {
       color: #5a8aff;
       text-decoration: none;
       font-weight: 500;
     }
-
     .footer-link:hover {
       color: #7aa0ff;
       text-decoration: underline;
     }
-
     @media (max-width: 480px) {
       .box {
         padding: 28px 20px;
@@ -187,45 +167,36 @@
   </style>
 </head>
 <body>
-
 <div class="box">
   <h2>로그인 / 회원가입</h2>
   <p class="subtitle">익명 메시지함을 시작하세요</p>
-
   <div class="group">
     <label>이메일</label>
     <input id="email" type="email" placeholder="example@email.com" autocomplete="email" />
   </div>
-
   <div class="group">
     <label>비밀번호</label>
     <input id="password" type="password" placeholder="비밀번호" autocomplete="current-password" />
   </div>
-
   <div class="group">
     <label>닉네임 (회원가입 시)</label>
     <input id="username" type="text" placeholder="닉네임 (예: JB777)" autocomplete="username" />
   </div>
-
   <button id="signupBtn">회원가입</button>
   <button id="loginBtn" class="secondary">로그인</button>
-
   <p id="errorMsg" class="error"></p>
   <p id="successMsg" class="success"></p>
 </div>
-
 <footer>
   <div class="footer-text">
-    이 사이트는 <a href="https://sharer.jbjb.r-e.kr/user?id=jbeom&nickname=JB777" 
-                   target="_blank" 
+    이 사이트는 <a href="https://sharer.jbjb.r-e.kr/user?id=jbeom&nickname=JB777"
+                   target="_blank"
                    class="footer-link">JB777</a>이 만들었습니다!
   </div>
 </footer>
-
 <script>
 const API_BASE = "https://chatchat-api.alexeom97.workers.dev";
 const FIREBASE_API_KEY = "AIzaSyCi0cus6PFFospMymbmILW7jHFu3OBoABY";
-
 const emailEl = document.getElementById("email");
 const passwordEl = document.getElementById("password");
 const usernameEl = document.getElementById("username");
@@ -233,12 +204,10 @@ const errorEl = document.getElementById("errorMsg");
 const successEl = document.getElementById("successMsg");
 const signupBtn = document.getElementById("signupBtn");
 const loginBtn = document.getElementById("loginBtn");
-
 function setLoading(btn, isLoading) {
   btn.disabled = isLoading;
   btn.textContent = isLoading ? "처리 중..." : (btn === signupBtn ? "회원가입" : "로그인");
 }
-
 async function firebaseSignUp(email, password) {
   const res = await fetch(
     `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${FIREBASE_API_KEY}`,
@@ -252,12 +221,10 @@ async function firebaseSignUp(email, password) {
       })
     }
   );
-
   const data = await res.json();
   if (!res.ok) throw new Error(data.error?.message || "회원가입에 실패했습니다");
   return data;
 }
-
 async function firebaseSignIn(email, password) {
   const res = await fetch(
     `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${FIREBASE_API_KEY}`,
@@ -271,19 +238,16 @@ async function firebaseSignIn(email, password) {
       })
     }
   );
-
   const data = await res.json();
   if (!res.ok) throw new Error(data.error?.message || "로그인에 실패했습니다");
   return data;
 }
-
 async function checkUsernameExists(username) {
   const res = await fetch(`${API_BASE}/check-username?username=${encodeURIComponent(username)}`);
   if (!res.ok) throw new Error("닉네임 중복 확인 중 오류가 발생했습니다");
   const { exists } = await res.json();
   return exists;
 }
-
 async function saveUserProfile(uid, username, email) {
   const res = await fetch(
     `https://chatchat-98586-default-rtdb.firebaseio.com/users/${uid}.json`,
@@ -297,25 +261,19 @@ async function saveUserProfile(uid, username, email) {
       })
     }
   );
-
   if (!res.ok) throw new Error("프로필 저장에 실패했습니다");
 }
-
 signupBtn.onclick = async () => {
   errorEl.textContent = "";
   successEl.textContent = "";
-
   const email = emailEl.value.trim();
   const password = passwordEl.value.trim();
   const username = usernameEl.value.trim();
-
   if (!email || !password || !username) {
     errorEl.textContent = "모든 항목을 입력해주세요";
     return;
   }
-
   setLoading(signupBtn, true);
-
   try {
     // 1. 닉네임 중복 확인
     const exists = await checkUsernameExists(username);
@@ -323,67 +281,53 @@ signupBtn.onclick = async () => {
       errorEl.textContent = "이미 사용 중인 닉네임입니다";
       return;
     }
-
     // 2. Firebase 회원가입
     const signUpData = await firebaseSignUp(email, password);
-
     // 3. 사용자 프로필 저장
     await saveUserProfile(signUpData.localId, username, email);
-
     // 4. 토큰 & username 저장
     localStorage.setItem("authToken", signUpData.idToken);
     localStorage.setItem("currentUsername", username);
-
     successEl.textContent = "회원가입 성공! 잠시 후 이동합니다...";
     setTimeout(() => location.href = "index.html", 1200);
   } catch (e) {
-    errorEl.textContent = e.message.includes("EMAIL_EXISTS") 
-      ? "이미 가입된 이메일입니다" 
-      : (e.message.includes("WEAK_PASSWORD") 
-        ? "비밀번호는 6자 이상이어야 합니다" 
+    errorEl.textContent = e.message.includes("EMAIL_EXISTS")
+      ? "이미 가입된 이메일입니다"
+      : (e.message.includes("WEAK_PASSWORD")
+        ? "비밀번호는 6자 이상이어야 합니다"
         : e.message);
   } finally {
     setLoading(signupBtn, false);
   }
 };
-
 loginBtn.onclick = async () => {
   errorEl.textContent = "";
   successEl.textContent = "";
-
   const email = emailEl.value.trim();
   const password = passwordEl.value.trim();
-
   if (!email || !password) {
     errorEl.textContent = "이메일과 비밀번호를 입력해주세요";
     return;
   }
-
   setLoading(loginBtn, true);
-
   try {
     // 1. Firebase 로그인
     const loginData = await firebaseSignIn(email, password);
-
     // 2. 사용자 정보 가져오기
     const userRes = await fetch(
       `https://chatchat-98586-default-rtdb.firebaseio.com/users/${loginData.localId}.json`
     );
-
     if (!userRes.ok) throw new Error("사용자 정보를 불러올 수 없습니다");
-
     const userData = await userRes.json();
     if (!userData?.username) throw new Error("닉네임 정보가 없습니다");
-
     // 3. 저장
     localStorage.setItem("authToken", loginData.idToken);
     localStorage.setItem("currentUsername", userData.username);
-
     successEl.textContent = `로그인 성공! ${userData.username}님 환영합니다~`;
     setTimeout(() => location.href = "index.html", 1000);
   } catch (e) {
-    errorEl.textContent = e.message.includes("INVALID_LOGIN_CREDENTIALS") || 
-                         e.message.includes("INVALID_PASSWORD") || 
+    errorEl.textContent = e.message.includes("INVALID_LOGIN_CREDENTIALS") ||
+                         e.message.includes("INVALID_PASSWORD") ||
                          e.message.includes("EMAIL_NOT_FOUND")
       ? "이메일 또는 비밀번호가 올바르지 않습니다"
       : e.message;
@@ -392,6 +336,5 @@ loginBtn.onclick = async () => {
   }
 };
 </script>
-
 </body>
 </html>
