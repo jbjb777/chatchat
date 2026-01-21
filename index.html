@@ -100,6 +100,7 @@
     }
    
     button {
+      width: 100%;
       padding: 16px;
       font-size: 1.05rem;
       font-weight: 600;
@@ -488,7 +489,7 @@ function showDashboard(username) {
     <button class="secondary" id="logoutBtn">로그아웃</button>
   `;
 
-  // 복사 버튼 동작
+  // 복사 버튼 이벤트
   const copyBtn = document.getElementById("copyBtn");
   copyBtn.onclick = () => {
     const linkText = document.getElementById("myLink").textContent;
@@ -500,7 +501,7 @@ function showDashboard(username) {
         copyBtn.textContent = "📋";
       }, 1400);
     }).catch(() => {
-      alert("복사에 실패했습니다.");
+      alert("복사 실패");
     });
   };
 
@@ -541,7 +542,7 @@ function logout() {
 }
 function escapeHtml(str) {
   return str.replace(/[&<>"']/g, m =>
-    ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"": "&quot;", "'": "&#039;" }[m])
+    ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" }[m])
   );
 }
 /* ───────── Page Load ───────── */
