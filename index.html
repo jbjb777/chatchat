@@ -100,7 +100,6 @@
     }
    
     button {
-      width: 100%;
       padding: 16px;
       font-size: 1.05rem;
       font-weight: 600;
@@ -138,16 +137,49 @@
     .success { color: #4caf50; }
     .error { color: #ff5252; }
    
-    .link-box {
+    .link-container {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin: 10px 0 16px;
+    }
+   
+    #myLink {
+      flex: 1;
       background: rgba(26, 26, 26, 0.75);
       border: 1px solid rgba(68, 68, 68, 0.7);
-      padding: 14px;
+      padding: 14px 16px;
       border-radius: 12px;
       word-break: break-all;
       font-size: 0.95rem;
-      margin: 10px 0 16px;
       color: #a0d2ff;
       backdrop-filter: blur(4px);
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+   
+    .copy-icon-btn {
+      width: 44px;
+      height: 44px;
+      min-width: 44px;
+      padding: 0;
+      font-size: 1.1rem;
+      background: var(--accent);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.25s;
+    }
+   
+    .copy-icon-btn:hover {
+      background: var(--accent-hover);
+      transform: scale(1.1);
+    }
+   
+    .copy-icon-btn.copied {
+      background: #00cc88 !important;
+      transform: scale(1.05);
     }
    
     ul {
@@ -169,7 +201,6 @@
       backdrop-filter: blur(4px);
     }
    
-    /* 스켈레톤 UI */
     .skeleton {
       background: linear-gradient(90deg, #2a2a2a 25%, #333 50%, #2a2a2a 75%);
       background-size: 200% 100%;
@@ -181,24 +212,6 @@
     @keyframes skeleton-loading {
       0% { background-position: 200% 0; }
       100% { background-position: -200% 0; }
-    }
-   
-    .center-hint {
-      text-align: center;
-      color: var(--text-sub);
-      margin: 2rem 0 1rem;
-      font-size: 0.95rem;
-    }
-   
-    a {
-      color: var(--accent);
-      text-decoration: none;
-      font-weight: 600;
-    }
-   
-    a:hover {
-      color: var(--accent-hover);
-      text-decoration: underline;
     }
    
     .messages-header {
@@ -227,78 +240,6 @@
       transform: translateY(-1px);
     }
    
-    /* 성공 페이지용 스타일 추가 */
-    .success-page {
-      text-align: center;
-      padding: 20px 0;
-    }
-   
-    .success-img {
-      width: 120px;
-      height: auto;
-      margin: 0 auto 24px;
-      display: block;
-    }
-   
-    .success-title {
-      font-size: 1.55rem;
-      font-weight: 700;
-      margin-bottom: 1.2rem;
-    }
-   
-    .success-desc {
-      font-size: 1.05rem;
-      color: #4caf50;
-      margin-bottom: 2.2rem;
-    }
-   
-    .action-btn {
-      margin: 12px 0;
-      padding: 16px;
-      font-size: 1.05rem;
-      font-weight: 600;
-      border-radius: 30px;
-      cursor: pointer;
-      transition: all 0.25s;
-    }
-   
-    .primary-action {
-      background: var(--accent);
-      color: white;
-      border: none;
-    }
-   
-    .primary-action:hover {
-      background: var(--accent-hover);
-      transform: translateY(-2px);
-    }
-   
-    .secondary-action {
-      background: transparent;
-      color: var(--accent);
-      border: 2px solid var(--accent);
-    }
-   
-    .secondary-action:hover {
-      background: rgba(54,99,255,0.1);
-    }
-   
-    .underline-link {
-      color: var(--accent);
-      text-decoration: underline;
-      font-weight: 500;
-      background: none;
-      border: none;
-      padding: 0;
-      cursor: pointer;
-      font-size: inherit;
-      font-family: inherit;
-    }
-   
-    .underline-link:hover {
-      color: var(--accent-hover);
-    }
-   
     footer {
       background: rgba(15, 15, 15, 0.75);
       border-top: 1px solid rgba(34, 34, 34, 0.6);
@@ -308,12 +249,6 @@
       color: #777;
       margin-top: 3rem;
       backdrop-filter: blur(10px);
-    }
-   
-    .footer-text {
-      max-width: 640px;
-      margin: 0 auto;
-      line-height: 1.6;
     }
    
     .footer-link {
@@ -338,41 +273,6 @@
         font-size: 1.8rem;
       }
     }
-
-    /* 추가된 복사 버튼 스타일 (URL 단축기에서 가져옴) */
-    .link-container {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-      margin-bottom: 15px;
-    }
-    #myLink {
-      flex: 1;
-      border: 2px solid #555;
-      border-radius: 8px;
-      padding: 12px 16px;
-      background: #2a2a2a;
-      color: #a0d2ff;
-      font-size: 0.95rem;
-      overflow-x: auto;
-      word-break: break-all;
-    }
-    #copyBtn {
-      min-width: 70px;
-      height: 45px;
-      padding: 0 20px;
-      border-radius: 30px;
-      font-size: 0.95rem;
-      background: var(--accent);
-      color: #fff;
-      cursor: pointer;
-      border: none;
-      transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55), background 0.2s;
-    }
-    #copyBtn:hover {
-      transform: translateY(-5px) scale(1.05);
-      background: var(--accent-hover);
-    }
   </style>
 </head>
 <body>
@@ -390,15 +290,19 @@
                     class="footer-link">JB777</a>이 만들었습니다!
   </div>
  </footer>
+
  <script>
 const API_BASE = "https://chatchat-api.alexeom97.workers.dev";
+
 function getToken() {
   return localStorage.getItem("authToken");
 }
+
 function setToken(t) {
   if (t) localStorage.setItem("authToken", t);
   else localStorage.removeItem("authToken");
 }
+
 async function api(endpoint, method = "GET", body = null) {
   const headers = { "Content-Type": "application/json" };
   const token = getToken();
@@ -414,7 +318,7 @@ async function api(endpoint, method = "GET", body = null) {
   if (!res.ok) throw new Error(data.error || "요청 실패");
   return data;
 }
-/* ───────── UI Functions ───────── */
+
 function showSendForm(targetUsername = "") {
   const el = document.getElementById("mainContainer");
   if (!el) return;
@@ -431,6 +335,7 @@ function showSendForm(targetUsername = "") {
   `;
   document.getElementById("sendBtn").onclick = () => sendMessage(targetUsername);
 }
+
 function showSuccessPage() {
   const el = document.getElementById("mainContainer");
   if (!el) return;
@@ -445,6 +350,7 @@ function showSuccessPage() {
     </div>
   `;
 }
+
 async function sendMessage(toUsername) {
   const input = document.getElementById("msgContent");
   const status = document.getElementById("sendStatus");
@@ -462,6 +368,7 @@ async function sendMessage(toUsername) {
     status.className = "status error";
   }
 }
+
 function showDashboard(username) {
   const el = document.getElementById("mainContainer");
   if (!el) return;
@@ -473,8 +380,8 @@ function showDashboard(username) {
       <div style="font-weight:600; margin-bottom:0.6rem; text-align:center;">내 링크 (공유하기)</div>
       
       <div class="link-container">
-        <div class="link-box" id="myLink">${myLink}</div>
-        <button id="copyBtn">복사</button>
+        <div id="myLink">${myLink}</div>
+        <button class="copy-icon-btn" id="copyBtn" title="링크 복사">📋</button>
       </div>
     </div>
   
@@ -489,21 +396,19 @@ function showDashboard(username) {
     <button class="secondary" id="logoutBtn">로그아웃</button>
   `;
 
-  // 복사 버튼 이벤트 (URL 단축기 스타일 적용)
-  document.getElementById("copyBtn").onclick = () => {
-    const copyBtn = document.getElementById("copyBtn");
+  // 복사 버튼 이벤트
+  const copyBtn = document.getElementById("copyBtn");
+  copyBtn.onclick = () => {
     const linkText = document.getElementById("myLink").textContent;
-
     navigator.clipboard.writeText(linkText).then(() => {
-      const originalText = copyBtn.textContent;
+      copyBtn.classList.add("copied");
       copyBtn.textContent = "✔";
-      copyBtn.style.background = "#00cc88";
       setTimeout(() => {
-        copyBtn.textContent = originalText;
-        copyBtn.style.background = "var(--accent)";
-      }, 1500);
+        copyBtn.classList.remove("copied");
+        copyBtn.textContent = "📋";
+      }, 1400);
     }).catch(() => {
-      alert("복사에 실패했습니다.");
+      alert("복사 실패 ㅠㅠ");
     });
   };
 
@@ -514,12 +419,12 @@ function showDashboard(username) {
   loadMessages(username);
   setInterval(() => loadMessages(username), 3000);
 }
+
 async function loadMessages(username) {
   const list = document.getElementById("messagesList");
   if (!list) return;
   try {
     const { messages = [] } = await api(`/messages?username=${username}`);
-  
     const recentMessages = messages.slice(0, 7);
     if (recentMessages.length === 0) {
       list.innerHTML = `<li style="text-align:center;color:#777">아직 받은 메시지가 없습니다</li>`;
@@ -533,21 +438,23 @@ async function loadMessages(username) {
         .join("");
     }
   } catch (e) {
-    list.innerHTML =
-      `<li style="text-align:center;color:#ff5252">메시지 불러오기 실패</li>`;
+    list.innerHTML = `<li style="text-align:center;color:#ff5252">메시지 불러오기 실패</li>`;
   }
 }
+
 function logout() {
   localStorage.removeItem("authToken");
   localStorage.removeItem("currentUsername");
   location.href = "login.html";
 }
+
 function escapeHtml(str) {
   return str.replace(/[&<>"']/g, m =>
     ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" }[m])
   );
 }
-/* ───────── Page Load ───────── */
+
+/* 페이지 로드 */
 (async () => {
   const params = new URLSearchParams(location.search);
   const targetUsername = params.get("u");
