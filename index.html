@@ -16,13 +16,11 @@
       --accent-hover: #4d7aff;
       --radius: 16px;
     }
-
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
     }
-
     body {
       font-family: system-ui, -apple-system, sans-serif;
       background: url('back.png') no-repeat center center fixed;
@@ -33,11 +31,9 @@
       display: flex;
       flex-direction: column;
     }
-
     main {
       flex: 1;
     }
-
     .header {
       display: flex;
       align-items: center;
@@ -48,28 +44,23 @@
       transform: translateY(20px);
       animation: fadeUp 0.7s ease-out forwards;
     }
-
     @keyframes fadeUp {
       to { opacity: 1; transform: translateY(0); }
     }
-
     .header img {
       height: 48px;
       width: auto;
       object-fit: contain;
     }
-
     .header .app-name {
       font-size: 2.1rem;
       font-weight: 700;
       letter-spacing: -0.6px;
     }
-
     .container {
       max-width: 580px;
       margin: 0 auto;
     }
-
     .card {
       background: rgba(30, 30, 30, 0.78);
       border: 1px solid rgba(51, 51, 51, 0.65);
@@ -83,21 +74,17 @@
       transform: translateY(30px);
       animation: cardSlideUp 0.65s ease-out forwards;
     }
-
     .card:nth-child(1) { animation-delay: 0.10s; }
     .card:nth-child(2) { animation-delay: 0.18s; }
     .card:nth-child(3) { animation-delay: 0.26s; }
-
     @keyframes cardSlideUp {
       to { opacity: 1; transform: translateY(0); }
     }
-
     h3, h4 {
       text-align: center;
       margin-bottom: 1.4rem;
       font-weight: 600;
     }
-
     textarea {
       width: 100%;
       min-height: 140px;
@@ -113,13 +100,11 @@
       outline: none;
       backdrop-filter: blur(4px);
     }
-
     textarea:focus {
       border-color: var(--accent);
       box-shadow: 0 0 0 3px rgba(54,99,255,0.2);
       background: rgba(26, 26, 26, 0.85);
     }
-
     button {
       width: 100%;
       padding: 16px;
@@ -133,39 +118,32 @@
       transition: all 0.25s ease;
       margin-top: 0.6rem;
     }
-
     button:hover {
       background: var(--accent-hover);
       transform: translateY(-2px);
       box-shadow: 0 8px 24px rgba(54,99,255,0.35);
     }
-
     .secondary {
       background: rgba(44, 44, 44, 0.7);
       color: #ccc;
       backdrop-filter: blur(6px);
     }
-
     .secondary:hover {
       background: rgba(56, 56, 56, 0.8);
     }
-
     .status {
       margin-top: 1rem;
       font-size: 0.95rem;
       text-align: center;
     }
-
     .success { color: #4caf50; }
     .error { color: #ff5252; }
-
     .link-container {
       display: flex;
       gap: 10px;
       align-items: center;
       margin: 16px 0 24px;
     }
-
     #myLink {
       flex: 1;
       background: rgba(26, 26, 26, 0.75);
@@ -179,7 +157,6 @@
       overflow-x: auto;
       white-space: nowrap;
     }
-
     .copy-icon-btn {
       width: 44px;
       height: 44px;
@@ -195,17 +172,14 @@
       border: none;
       cursor: pointer;
     }
-
     .copy-icon-btn:hover {
       background: var(--accent-hover);
       transform: scale(1.1);
     }
-
     .copy-icon-btn.copied {
       background: #00cc88 !important;
       transform: scale(1.05);
     }
-
     /* 개별 메시지 카드 */
     .message-card {
       background: rgba(35, 35, 35, 0.82);
@@ -222,31 +196,26 @@
       transform: translateY(20px);
       animation: messageCardUp 0.6s ease-out forwards;
     }
-
     .message-card:nth-child(1) { animation-delay: 0.35s; }
     .message-card:nth-child(2) { animation-delay: 0.42s; }
     .message-card:nth-child(3) { animation-delay: 0.49s; }
     .message-card:nth-child(4) { animation-delay: 0.56s; }
     .message-card:nth-child(5) { animation-delay: 0.63s; }
-
     @keyframes messageCardUp {
       to { opacity: 1; transform: translateY(0); }
     }
-
     .no-messages {
       text-align: center;
       color: #777;
       padding: 40px 0;
       font-size: 0.98rem;
     }
-
     .messages-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin: 0 0 20px;
     }
-
     .more-btn {
       padding: 9px 18px;
       font-size: 0.92rem;
@@ -257,11 +226,9 @@
       cursor: pointer;
       white-space: nowrap;
     }
-
     .more-btn:hover {
       background: rgba(77, 122, 255, 0.95);
     }
-
     /* 성공 페이지 */
     .success-page {
       text-align: center;
@@ -269,30 +236,25 @@
       opacity: 0;
       animation: fadeIn 0.8s ease-out 0.3s forwards;
     }
-
     @keyframes fadeIn {
       to { opacity: 1; }
     }
-
     .success-img {
       width: 110px;
       height: auto;
       margin: 0 auto 28px;
       display: block;
     }
-
     .success-title {
       font-size: 1.65rem;
       font-weight: 700;
       margin-bottom: 1.3rem;
     }
-
     .success-desc {
       font-size: 1.1rem;
       color: #4caf50;
       margin-bottom: 2.6rem;
     }
-
     .action-btn {
       margin: 14px 0;
       padding: 16px;
@@ -302,35 +264,29 @@
       cursor: pointer;
       transition: all 0.25s;
     }
-
     .primary-action {
       background: var(--accent);
       color: white;
       border: none;
     }
-
     .primary-action:hover {
       background: var(--accent-hover);
       transform: translateY(-2px);
     }
-
     .secondary-action {
       background: transparent;
       color: var(--accent);
       border: 2px solid var(--accent);
     }
-
     .secondary-action:hover {
       background: rgba(54,99,255,0.08);
     }
-
     .login-hint {
       margin-top: 2rem;
       font-size: 0.96rem;
       text-align: center;
       color: var(--text-sub);
     }
-
     .login-hint button {
       background: none;
       border: none;
@@ -340,7 +296,6 @@
       padding: 0;
       text-decoration: underline;
     }
-
     footer {
       background: rgba(15, 15, 15, 0.75);
       border-top: 1px solid rgba(34, 34, 34, 0.6);
@@ -351,18 +306,15 @@
       margin-top: 4rem;
       backdrop-filter: blur(10px);
     }
-
     .footer-link {
       color: #5a8aff;
       text-decoration: none;
       font-weight: 500;
     }
-
     .footer-link:hover {
       color: #7aa0ff;
       text-decoration: underline;
     }
-
     @media (max-width: 520px) {
       .header img { height: 40px; }
       .header .app-name { font-size: 1.8rem; }
@@ -371,25 +323,20 @@
   </style>
 </head>
 <body>
-
 <main>
   <div class="header">
     <img src="logo.png" alt="ChatChat Logo">
     <span class="app-name">ChatChat</span>
   </div>
-
   <div class="container" id="mainContainer"></div>
 </main>
-
 <footer>
   <div>
     이 사이트는 <a href="https://sharer.jbjb.r-e.kr/user?id=jbeom&nickname=JB777" target="_blank" class="footer-link">JB777</a>이 만들었습니다!
   </div>
 </footer>
-
 <script>
 const API_BASE = "https://chatchat-api.alexeom97.workers.dev";
-
 function getToken() {
   return localStorage.getItem("authToken");
 }
@@ -397,7 +344,6 @@ function setToken(t) {
   if (t) localStorage.setItem("authToken", t);
   else localStorage.removeItem("authToken");
 }
-
 async function api(endpoint, method = "GET", body = null) {
   const headers = { "Content-Type": "application/json" };
   const token = getToken();
@@ -413,28 +359,23 @@ async function api(endpoint, method = "GET", body = null) {
   if (!res.ok) throw new Error(data.error || "요청 실패");
   return data;
 }
-
 /* ───────── UI Functions ───────── */
 function showSendForm(targetUsername = "") {
   const el = document.getElementById("mainContainer");
   const displayName = targetUsername || "누군가";
-
   el.innerHTML = `
     <div class="card">
       <h3>${displayName}에게 익명 메시지 보내기</h3>
       <textarea id="msgContent" placeholder="메시지를 입력하세요..." maxlength="1000"></textarea>
       <button id="sendBtn">보내기</button>
       <p id="sendStatus" class="status"></p>
-
       <div class="login-hint">
         <button onclick="location.href='index.html'">로그인하고 나만의 익명 메시지 받기</button>
       </div>
     </div>
   `;
-
   document.getElementById("sendBtn").onclick = () => sendMessage(targetUsername);
 }
-
 function showSuccessPage() {
   const el = document.getElementById("mainContainer");
   el.innerHTML = `
@@ -442,24 +383,20 @@ function showSuccessPage() {
       <img src="send.png" alt="전송 완료" class="success-img">
       <div class="success-title">메시지가 보내졌습니다!</div>
       <div class="success-desc">익명으로 잘 전달되었어요</div>
-
       <button class="action-btn primary-action" onclick="location.href='index.html'">나만의 메시지 받기</button>
       <button class="action-btn secondary-action" onclick="location.reload()">다른 메시지 보내기</button>
     </div>
   `;
 }
-
 async function sendMessage(toUsername) {
-  const input  = document.getElementById("msgContent");
+  const input = document.getElementById("msgContent");
   const status = document.getElementById("sendStatus");
   const content = input?.value?.trim();
-
   if (!content || !toUsername) {
     status.textContent = "메시지를 입력해주세요";
     status.className = "status error";
     return;
   }
-
   try {
     await api("/send", "POST", { toUsername, content });
     showSuccessPage();
@@ -468,15 +405,12 @@ async function sendMessage(toUsername) {
     status.className = "status error";
   }
 }
-
 function showDashboard(username) {
   const el = document.getElementById("mainContainer");
   const myLink = `${location.origin}${location.pathname}?u=${username}`;
-
   el.innerHTML = `
     <div class="card">
       <h3>📬 ${username}의 메시지함</h3>
-
       <div style="margin:1.8rem 0 2.2rem;">
         <div style="font-weight:600; margin-bottom:0.8rem; text-align:center;">내 링크 (공유하기)</div>
         <div class="link-container">
@@ -485,13 +419,11 @@ function showDashboard(username) {
         </div>
       </div>
     </div>
-
     <div class="card">
       <div class="messages-header">
         <h4>받은 메시지</h4>
         <button class="more-btn" id="moreBtn">더 보기</button>
       </div>
-
       <div id="messagesList">
         <!-- 스켈레톤 -->
         ${Array(5).fill().map(() => `
@@ -499,12 +431,10 @@ function showDashboard(username) {
         `).join("")}
       </div>
     </div>
-
     <div class="card" style="text-align:center; padding:20px;">
       <button class="secondary" id="logoutBtn" style="width:auto; padding:12px 40px;">로그아웃</button>
     </div>
   `;
-
   // 이벤트 연결
   document.getElementById("copyBtn").onclick = () => {
     const linkText = document.getElementById("myLink").textContent;
@@ -518,28 +448,21 @@ function showDashboard(username) {
       }, 1400);
     }).catch(() => alert("복사 실패"));
   };
-
   document.getElementById("logoutBtn").onclick = logout;
   document.getElementById("moreBtn").onclick = () => { location.href = "dash.html"; };
-
   loadMessages(username);
   setInterval(() => loadMessages(username), 4000);
 }
-
 async function loadMessages(username) {
   const container = document.getElementById("messagesList");
   if (!container) return;
-
   try {
     const { messages = [] } = await api(`/messages?username=${username}`);
-
     if (messages.length === 0) {
       container.innerHTML = `<div class="no-messages">아직 받은 메시지가 없습니다</div>`;
       return;
     }
-
     const recent = messages.slice(0, 12);
-
     container.innerHTML = recent.map(m => {
       const content = escapeHtml(m.content || "").trim();
       return `<div class="message-card">${content || '(빈 메시지)'}</div>`;
@@ -548,29 +471,24 @@ async function loadMessages(username) {
     container.innerHTML = `<div class="no-messages" style="color:#ff5252;">메시지 불러오기 실패</div>`;
   }
 }
-
 function logout() {
   localStorage.removeItem("authToken");
   localStorage.removeItem("currentUsername");
   location.href = "login.html";
 }
-
 function escapeHtml(str) {
   return str.replace(/[&<>"']/g, m =>
     ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" }[m])
   );
 }
-
 /* ───────── Page Load ───────── */
 (async () => {
   const params = new URLSearchParams(location.search);
   const targetUsername = params.get("u");
-
   if (targetUsername) {
     showSendForm(targetUsername);
     return;
   }
-
   const storedUsername = localStorage.getItem("currentUsername");
   if (storedUsername && getToken()) {
     showDashboard(storedUsername);
