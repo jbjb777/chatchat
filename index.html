@@ -206,37 +206,31 @@
       transform: scale(1.05);
     }
 
-    /* 메시지 리스트 – 박스 없이 표시 */
-    .messages-list {
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-      margin: 16px 0 32px;
-    }
-
-    .message-item {
-      padding: 16px 0;
-      border-bottom: 1px solid rgba(51,51,51,0.4);
+    /* 개별 메시지 카드 */
+    .message-card {
+      background: rgba(35, 35, 35, 0.82);
+      border: 1px solid rgba(60, 60, 60, 0.5);
+      border-radius: 14px;
+      padding: 18px 20px;
+      margin-bottom: 16px;
       font-size: 1rem;
-      line-height: 1.5;
+      line-height: 1.48;
       white-space: pre-wrap;
       word-break: break-word;
-      color: #ddd;
+      color: #e0e0e0;
       opacity: 0;
-      transform: translateX(-20px);
-      animation: messageAppear 0.6s ease-out forwards;
+      transform: translateY(20px);
+      animation: messageCardUp 0.6s ease-out forwards;
     }
 
-    .message-item:nth-child(1) { animation-delay: 0.4s; }
-    .message-item:nth-child(2) { animation-delay: 0.48s; }
-    .message-item:nth-child(3) { animation-delay: 0.56s; }
-    .message-item:nth-child(4) { animation-delay: 0.64s; }
-    .message-item:nth-child(5) { animation-delay: 0.72s; }
-    .message-item:nth-child(6) { animation-delay: 0.80s; }
-    .message-item:nth-child(7) { animation-delay: 0.88s; }
+    .message-card:nth-child(1) { animation-delay: 0.35s; }
+    .message-card:nth-child(2) { animation-delay: 0.42s; }
+    .message-card:nth-child(3) { animation-delay: 0.49s; }
+    .message-card:nth-child(4) { animation-delay: 0.56s; }
+    .message-card:nth-child(5) { animation-delay: 0.63s; }
 
-    @keyframes messageAppear {
-      to { opacity: 1; transform: translateX(0); }
+    @keyframes messageCardUp {
+      to { opacity: 1; transform: translateY(0); }
     }
 
     .no-messages {
@@ -250,31 +244,28 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin: 32px 0 16px;
-    }
-
-    .messages-header h4 {
-      margin: 0;
+      margin: 0 0 20px;
     }
 
     .more-btn {
-      padding: 8px 20px;
-      font-size: 0.9rem;
-      border-radius: 20px;
-      background: rgba(54, 99, 255, 0.8);
+      padding: 9px 18px;
+      font-size: 0.92rem;
+      border-radius: 999px;
+      background: rgba(54, 99, 255, 0.85);
       color: white;
       border: none;
       cursor: pointer;
+      white-space: nowrap;
     }
 
     .more-btn:hover {
-      background: rgba(77, 122, 255, 0.9);
+      background: rgba(77, 122, 255, 0.95);
     }
 
     /* 성공 페이지 */
     .success-page {
       text-align: center;
-      padding: 40px 20px;
+      padding: 32px 20px;
       opacity: 0;
       animation: fadeIn 0.8s ease-out 0.3s forwards;
     }
@@ -284,26 +275,26 @@
     }
 
     .success-img {
-      width: 120px;
+      width: 110px;
       height: auto;
-      margin: 0 auto 24px;
+      margin: 0 auto 28px;
       display: block;
     }
 
     .success-title {
-      font-size: 1.6rem;
+      font-size: 1.65rem;
       font-weight: 700;
-      margin-bottom: 1.2rem;
+      margin-bottom: 1.3rem;
     }
 
     .success-desc {
-      font-size: 1.08rem;
+      font-size: 1.1rem;
       color: #4caf50;
-      margin-bottom: 2.4rem;
+      margin-bottom: 2.6rem;
     }
 
     .action-btn {
-      margin: 12px 0;
+      margin: 14px 0;
       padding: 16px;
       font-size: 1.05rem;
       font-weight: 600;
@@ -330,7 +321,24 @@
     }
 
     .secondary-action:hover {
-      background: rgba(54,99,255,0.1);
+      background: rgba(54,99,255,0.08);
+    }
+
+    .login-hint {
+      margin-top: 2rem;
+      font-size: 0.96rem;
+      text-align: center;
+      color: var(--text-sub);
+    }
+
+    .login-hint button {
+      background: none;
+      border: none;
+      color: var(--accent);
+      font-size: inherit;
+      cursor: pointer;
+      padding: 0;
+      text-decoration: underline;
     }
 
     footer {
@@ -417,10 +425,10 @@ function showSendForm(targetUsername = "") {
       <textarea id="msgContent" placeholder="메시지를 입력하세요..." maxlength="1000"></textarea>
       <button id="sendBtn">보내기</button>
       <p id="sendStatus" class="status"></p>
-    </div>
 
-    <div style="text-align:center; margin-top:2rem; font-size:0.98rem;">
-      <button class="underline-link" style="background:none;border:none;color:var(--accent);cursor:pointer;" onclick="location.href='index.html'">로그인하고 나만의 익명 메시지 받기</button>
+      <div class="login-hint">
+        <button onclick="location.href='index.html'">로그인하고 나만의 익명 메시지 받기</button>
+      </div>
     </div>
   `;
 
@@ -430,10 +438,11 @@ function showSendForm(targetUsername = "") {
 function showSuccessPage() {
   const el = document.getElementById("mainContainer");
   el.innerHTML = `
-    <div class="success-page">
+    <div class="card success-page">
       <img src="send.png" alt="전송 완료" class="success-img">
       <div class="success-title">메시지가 보내졌습니다!</div>
       <div class="success-desc">익명으로 잘 전달되었어요</div>
+
       <button class="action-btn primary-action" onclick="location.href='index.html'">나만의 메시지 받기</button>
       <button class="action-btn secondary-action" onclick="location.reload()">다른 메시지 보내기</button>
     </div>
@@ -480,19 +489,19 @@ function showDashboard(username) {
     <div class="card">
       <div class="messages-header">
         <h4>받은 메시지</h4>
-        <button class="more-btn" id="moreBtn">더보기</button>
+        <button class="more-btn" id="moreBtn">더 보기</button>
       </div>
 
-      <div class="messages-list" id="messagesList">
+      <div id="messagesList">
         <!-- 스켈레톤 -->
-        ${Array(6).fill().map(() => `
-          <div class="message-item" style="height:1.4em;background:linear-gradient(90deg,#2a2a2a 25%,#333 50%,#2a2a2a 75%);background-size:200% 100%;animation:skeleton-loading 1.6s infinite;"></div>
+        ${Array(5).fill().map(() => `
+          <div class="message-card" style="height:3.2em; background:linear-gradient(90deg,#2a2a2a 25%,#333 50%,#2a2a2a 75%); background-size:200% 100%; animation:skeleton-loading 1.6s infinite;"></div>
         `).join("")}
       </div>
     </div>
 
-    <div class="card" style="text-align:center;">
-      <button class="secondary" id="logoutBtn" style="width:auto; padding:12px 32px;">로그아웃</button>
+    <div class="card" style="text-align:center; padding:20px;">
+      <button class="secondary" id="logoutBtn" style="width:auto; padding:12px 40px;">로그아웃</button>
     </div>
   `;
 
@@ -529,11 +538,11 @@ async function loadMessages(username) {
       return;
     }
 
-    const recent = messages.slice(0, 10); // 최근 10개만
+    const recent = messages.slice(0, 12);
 
     container.innerHTML = recent.map(m => {
-      const content = escapeHtml(m.content || "");
-      return `<div class="message-item">${content}</div>`;
+      const content = escapeHtml(m.content || "").trim();
+      return `<div class="message-card">${content || '(빈 메시지)'}</div>`;
     }).join("");
   } catch (e) {
     container.innerHTML = `<div class="no-messages" style="color:#ff5252;">메시지 불러오기 실패</div>`;
